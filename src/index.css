@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+    overflow: hidden
+}
+
+/* width */
+::-webkit-scrollbar {
+    display: none;
+}
