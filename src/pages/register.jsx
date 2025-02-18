@@ -1,10 +1,34 @@
-import { useState } from "react";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { useContext, useState } from "react";
+import { AuthContext } from "../config/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/navBar";
+import Loading from "../components/loadingScreen";
 
 export default function Register() {
     const [error, setError] = useState("");
+    const { createUser, user, loading, cancelLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+
+    if (loading) {
+        return (
+            <Loading />
+        );
+    }
+
+    if (user) {
+        navigate("/dashboard");
+    }
+
+    const firebaseErrorMessages = {
+        "auth/email-already-in-use": "This email is already in use.",
+        "auth/invalid-email": "Invalid email address.",
+        "auth/operation-not-allowed": "Operation not allowed. Please contact support.",
+        "auth/weak-password": "Password is too weak. Please choose a stronger password.",
+        "auth/password-does-not-meet-requirements": "Password must contain at least 6 characters and a non-alphanumeric character.",
+        // Add more error codes and messages as needed
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -22,23 +46,15 @@ export default function Register() {
             return;
         }
 
-        const auth = getAuth();
-
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                console.log("Registered user: ", user);
-                sendEmailVerification(user).then(() => {
-                    console.log("Verification email sent.");
-                }).catch((error) => {
-                    console.log("Error sending verification email: ", error);
-                });
+        createUser(email, password)
+            .then((result) => {
+                navigate("/dashboard");
             })
             .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log("Error ocured: ", errorCode, errorMessage);
-                setError(errorMessage);
+                const friendlyMessage = firebaseErrorMessages[error.code] || "An unexpected error occurred. Please try again.";
+                setError(friendlyMessage);
+                console.log(error);
+                cancelLoading();
             });
 
     };
@@ -52,7 +68,7 @@ export default function Register() {
                         <div class="p-8 rounded-2xl bg-white bg-opacity-5">
                             <h2 class="text-white text-center text-2xl font-bold">Create Account</h2>
                             <form class="mt-8 space-y-4" onSubmit={handleSubmit}>
-                                {error && <p class="text-red-500 text-sm">{error}</p>}
+                                {error && <p class="text-red-500 text-sm text-center">{error}</p>}
                                 <div>
                                     <label class="text-white text-sm mb-2 block">Email</label>
                                     <div class="relative flex items-center">

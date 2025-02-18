@@ -1,18 +1,18 @@
-import { useState, useEffect } from "react";
-import { getAuth, signOut } from "firebase/auth";
-
-import { useSelector } from "react-redux";
+import { useState, useContext } from "react";
+import { AuthContext } from "../config/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 import FeedbackRatioChart from "../components/pieChart";
 import FeedbackAmountChart from "../components/barChart";
 
 export default function Dashboard() {
+    const { user, logOut, loading } = useContext(AuthContext);
+
     const [currentPage, setCurrentPage] = useState("Overview");
     const [checkAll, setCheckAll] = useState(false);
     const [rowsCheck, setRowsCheck] = useState([]);
 
-
-    const auth = getAuth();
+    const navigate = useNavigate();
 
     // Handle check All
     const handleCheckAll = () => {
@@ -161,13 +161,12 @@ export default function Dashboard() {
                         </div>
 
                         <a href="#" className="text-white text-sm font-medium mr-8" onClick={() => {
-                            signOut(auth)
+                            logOut()
                                 .then(() => {
-                                    console.log("user signed out");
+                                    console.log("User logged out successfully");
+                                    navigate("/login"); // Redirect to the login page after logout
                                 })
-                                .catch((error) => {
-                                    console.log("error", error);
-                                });
+                                .catch((error) => console.error(error));
                         }}>Logout</a>
                     </div>
                     {/* Main Area */}

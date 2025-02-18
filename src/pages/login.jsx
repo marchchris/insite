@@ -1,10 +1,32 @@
-import { useState } from "react";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useContext, useState } from "react";
+import { AuthContext } from "../config/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/navBar";
+import Loading from "../components/loadingScreen";
 
 export default function Login() {
     const [error, setError] = useState("");
+    const { loginUser, loading, user, cancelLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    if (loading) {
+        return (
+            <Loading />
+        );
+    }
+
+    if (user) {
+        navigate("/dashboard");
+    }
+
+    const firebaseErrorMessages = {
+        "auth/user-not-found": "No user exists with this email.",
+        "auth/wrong-password": "Invalid email address or password.",
+        "auth/invalid-email": "Invalid email address or password.",
+        "auth/user-disabled": "This user account has been disabled.",
+        // Add more error codes and messages as needed
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -16,18 +38,15 @@ export default function Login() {
             return;
         }
 
-        const auth = getAuth();
-
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                console.log("Singed in user: ", user);
+        loginUser(email, password)
+            .then((result) => {
+                navigate("/");
             })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log("An error occured: ", errorCode, errorMessage);
-                setError(errorMessage);
+            .catch((error) => { 
+                console.log(error.message); 
+                const friendlyMessage = firebaseErrorMessages[error.code] || "An unexpected error occurred. Please try again.";
+                setError(friendlyMessage); 
+                cancelLoading();
             });
     };
 
@@ -40,7 +59,7 @@ export default function Login() {
                         <div class="p-8 rounded-2xl bg-white bg-opacity-5">
                             <h2 class="text-white text-center text-2xl font-bold">Sign in</h2>
                             <form class="mt-8 space-y-4" onSubmit={handleSubmit}>
-                                {error && <p class="text-red-500 text-sm">{error}</p>}
+                                {error && <p class="text-red-500 text-sm text-center">{error}</p>}
                                 <div>
                                     <label class="text-white text-sm mb-2 block">Email</label>
                                     <div class="relative flex items-center">
