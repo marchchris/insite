@@ -19,6 +19,16 @@ export default function Dashboard() {
 
     const [userData, setUserData] = useState({});
 
+    const [feedbackStats, setFeedbackStats] = useState({
+        received: 0,
+        positive: 0,
+        negative: 0,
+        resolved: 0,
+        receivedChange: 0,
+        positiveChange: 0,
+        negativeChange: 0,
+    });
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,6 +39,35 @@ export default function Dashboard() {
                     console.log(returnedData);
                     setUserData(returnedData);
                     setIsDataLoading(false);
+
+                    // Calculate feedback statistics
+                    const feedbackData = returnedData.feedbackData;
+                    const now = new Date();
+                    const last7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)));
+                    const previous7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)) && new Date(fb["Date Submitted"]) < new Date(now.setDate(now.getDate() + 7)));
+
+                    const received = last7Days.length;
+                    const positive = last7Days.filter(fb => fb.rating > 7).length;
+                    const negative = last7Days.filter(fb => fb.rating <= 4).length;
+                    const resolved = feedbackData.filter(fb => fb.resolved === true).length;
+
+                    const previousReceived = previous7Days.length;
+                    const previousPositive = previous7Days.filter(fb => fb.Rating > 7).length;
+                    const previousNegative = previous7Days.filter(fb => fb.Rating <= 4).length;
+
+                    const receivedChange = ((received - previousReceived) / (previousReceived || 1)) * 100;
+                    const positiveChange = ((positive - previousPositive) / (previousPositive || 1)) * 100;
+                    const negativeChange = ((negative - previousNegative) / (previousNegative || 1)) * 100;
+
+                    setFeedbackStats({
+                        received,
+                        positive,
+                        negative,
+                        resolved,
+                        receivedChange,
+                        positiveChange,
+                        negativeChange,
+                    });
                 } catch (error) {
                     console.error("Failed to fetch user data", error);
                 }
@@ -206,106 +245,164 @@ export default function Dashboard() {
                                         className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 p-8 py-10 w-1/4 mx-4"
                                     >
                                         <div>
-                                            <p className="text-sm text-white">Feedback Recieved</p>
+                                            <p className="text-sm text-white">Feedback Received</p>
                                             <p className="text-xs text-white opacity-40">Last 7 Days</p>
 
-                                            <p className="text-2xl font-medium text-white">$240.94</p>
+                                            <p className="text-2xl font-medium text-white">{feedbackStats.received}</p>
                                         </div>
 
-                                        <div
-                                            className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                                                />
-                                            </svg>
+                                        {feedbackStats.receivedChange >= 0 ? (
+                                            <div className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="size-4"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                                                    />
+                                                </svg>
 
-                                            <span className="text-xs font-medium"> 67.81% </span>
-                                        </div>
+                                                <span className="text-xs font-medium"> {feedbackStats.receivedChange.toFixed(2)}% </span>
+
+                                            </div>
+                                        ) : (
+                                            <div className="inline-flex gap-2 rounded-sm p-1 bg-red-500 text-red-50 bg-opacity-75">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="size-4"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                                                    />
+                                                </svg>
+
+                                                <span className="text-xs font-medium"> {feedbackStats.receivedChange.toFixed(2)}% </span>
+                                            </div>
+                                        )}
                                     </article>
 
                                     <article
                                         className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 p-10 w-1/4 mx-4"
                                     >
                                         <div>
-                                            <p className="text-sm text-white">Positve Feedback</p>
+                                            <p className="text-sm text-white">Positive Feedback</p>
                                             <p className="text-xs text-white opacity-40">Last 7 Days</p>
 
-                                            <p className="text-2xl font-medium text-white">$240.94</p>
+                                            <p className="text-2xl font-medium text-white">{feedbackStats.positive}</p>
                                         </div>
 
-                                        <div
-                                            className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                                                />
-                                            </svg>
+                                        {feedbackStats.positiveChange >= 0 ? (
+                                            <div className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="size-4"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                                                    />
+                                                </svg>
 
-                                            <span className="text-xs font-medium"> 67.81% </span>
-                                        </div>
+                                                <span className="text-xs font-medium"> {feedbackStats.positiveChange.toFixed(2)}% </span>
+                                            </div>
+                                        ) : (
+                                            <div className="inline-flex gap-2 rounded-sm p-1 bg-red-500 text-red-50 bg-opacity-75">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="size-4"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                                                    />
+                                                </svg>
+
+                                                <span className="text-xs font-medium"> {feedbackStats.positiveChange.toFixed(2)}% </span>
+                                            </div>
+                                        )}
                                     </article>
 
                                     <article
                                         className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 p-10 w-1/4 mx-4"
                                     >
                                         <div>
-                                            <p className="text-sm text-white">Resolved Feedback</p>
+                                            <p className="text-sm text-white">Negative Feedback</p>
                                             <p className="text-xs text-white opacity-40">Last 7 Days</p>
 
-                                            <p className="text-2xl font-medium text-white">$240.94</p>
+                                            <p className="text-2xl font-medium text-white">{feedbackStats.negative}</p>
                                         </div>
 
-                                        <div
-                                            className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                                                />
-                                            </svg>
+                                        {feedbackStats.negativeChange >= 0 ? (
+                                            <div className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="size-4"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                                                    />
+                                                </svg>
 
-                                            <span className="text-xs font-medium"> 67.81% </span>
-                                        </div>
+                                                <span className="text-xs font-medium"> {feedbackStats.negativeChange.toFixed(2)}% </span>
+                                            </div>
+                                        ) : (
+                                            <div className="inline-flex gap-2 rounded-sm p-1 bg-red-500 text-red-50 bg-opacity-75">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="size-4"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                                                    />
+                                                </svg>
+
+                                                <span className="text-xs font-medium"> {feedbackStats.negativeChange.toFixed(2)}% </span>
+                                            </div>
+                                        )}
                                     </article>
 
                                     <article
                                         className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 p-10 w-1/4 mx-4"
                                     >
                                         <div>
-                                            <p className="text-sm text-white">Feedback Recieved</p>
+                                            <p className="text-sm text-white">Feedback Resolved</p>
                                             <p className="text-xs text-white opacity-40">All Time</p>
 
-                                            <p className="text-2xl font-medium text-white">$240.94</p>
+                                            <p className="text-2xl font-medium text-white">{feedbackStats.resolved}</p>
                                         </div>
                                     </article>
 
@@ -316,17 +413,18 @@ export default function Dashboard() {
 
                                     <div className="flex flex-row w-full h-full px-4 gap-8">
                                         <div className="flex flex-col w-4/6 h-full p-8 bg-white bg-opacity-5 rounded-xl">
-                                            <h1 className=" text-white font-semibold">Feedback Recieved Per Month</h1>
+                                            <h1 className=" text-white font-semibold">Feedback Received Per Month</h1>
                                             <p className="text-xs text-white opacity-40">Last 12 Months</p>
                                             <div className="flex w-full h-full justify-center items-center">
-                                                <FeedbackAmountChart />
+                                                <FeedbackAmountChart feedbackData={userData.feedbackData} />
                                             </div>
                                         </div>
                                         <div className="flex flex-col w-2/6 h-full rounded-xl bg-white bg-opacity-5 p-8">
                                             <h1 className="text-white font-semibold">Current Feedback Pending</h1>
+                                            <p className="text-xs text-white opacity-40">All Time</p>
                                             <div className="flex flex-row w-full h-full justify-center items-center">
                                                 <div className="flex w-2/3 h-full justify-center items-center">
-                                                    <FeedbackRatioChart />
+                                                    <FeedbackRatioChart feedbackData={userData.feedbackData} />
                                                 </div>
                                                 <div className="flex w-1/3 h-full justify-center items-center">
                                                     <ul className="space-y-3">
@@ -373,53 +471,209 @@ export default function Dashboard() {
                                             </div>
 
                                             <div className="flex flex-row gap-2">
-                                                <div class="relative">
-                                                    <select
-                                                        class="w-full bg-white bg-opacity-10 text-white text-sm rounded-lg pl-3 pr-2 py-2 mr-8 transition duration-300 appearance-none cursor-pointer focus:outline-none">
-                                                        <option value="all" className="bg-neutral-700">All Ratings</option>
-                                                        <option value="bug" className="bg-neutral-700">Postive</option>
-                                                        <option value="design" className="bg-neutral-700">Negative</option>
-                                                        <option value="feature" className="bg-neutral-700">Neutral</option>
-                                                    </select>
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        class="h-5 w-5 ml-1 absolute top-2.5 right-3.5 text-white"
-                                                        viewBox="0 0 24 24"
-                                                        fill="#fff">
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                            clipRule="evenodd"
-                                                        />
-                                                    </svg>
+                                                {/* Category filtering menu */}
+                                                <div className="relative">
+                                                    <details className="group [&_summary::-webkit-details-marker]:hidden">
+                                                        <summary
+                                                            className="flex cursor-pointer items-center gap-2 border-b border-gray-400 pb-1 text-white"
+                                                        >
+                                                            <span className="text-sm font-medium"> Category </span>
+
+                                                            <span className="transition group-open:-rotate-180">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    strokeWidth="1.5"
+                                                                    stroke="currentColor"
+                                                                    className="size-4"
+                                                                >
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                                                </svg>
+                                                            </span>
+                                                        </summary>
+
+                                                        <div className="z-50 group-open:absolute group-open:start-0 group-open:top-auto group-open:mt-2">
+                                                            <div
+                                                                className="rounded-sm border border-neutral-600 bg-neutral-700"
+                                                            >
+                                                                <header className="flex items-center justify-between p-4">
+                                                                    <span className="text-sm text-white text-gray-200"> 0 Selected </span>
+
+                                                                    <button
+                                                                        type="button"
+                                                                        className="text-sm underline underline-offset-4 text-white"
+                                                                    >
+                                                                        Reset
+                                                                    </button>
+                                                                </header>
+
+                                                                <ul className="space-y-1 border-t border-neutral-600 p-4">
+                                                                    <li>
+                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
+                                                                            <label class="flex items-center cursor-pointer relative">
+                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="bugCheckbox" />
+                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </label>
+                                                                            <span className="text-sm font-medium text-white">
+                                                                                Bugs
+                                                                            </span>
+                                                                        </label>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
+                                                                            <label class="flex items-center cursor-pointer relative">
+                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="designCheckbox" />
+                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </label>
+                                                                            <span className="text-sm font-medium text-white">
+                                                                                Design
+                                                                            </span>
+                                                                        </label>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
+                                                                            <label class="flex items-center cursor-pointer relative">
+                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="featureCheckbox" />
+                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </label>
+                                                                            <span className="text-sm font-medium text-white">
+                                                                                Features
+                                                                            </span>
+                                                                        </label>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
+                                                                            <label class="flex items-center cursor-pointer relative">
+                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="recommendationCheckbox" />
+                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </label>
+                                                                            <span className="text-sm font-medium text-white">
+                                                                                Recommendations
+                                                                            </span>
+                                                                        </label>
+                                                                    </li>
+
+
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </details>
                                                 </div>
 
-                                                <div class="relative">
-                                                    <select
-                                                        class="w-full bg-white bg-opacity-10 text-white text-sm rounded-lg pl-3 pr-2 py-2 transition duration-300 appearance-none cursor-pointer focus:outline-none">
-                                                        <option value="all" className="bg-neutral-700">All Categories</option>
-                                                        <option value="bug" className="bg-neutral-700">Bugs</option>
-                                                        <option value="design" className="bg-neutral-700">Design</option>
-                                                        <option value="feature" className="bg-neutral-700">Features</option>
-                                                        <option value="recommend" className="bg-neutral-700">Recommendations</option>
-                                                    </select>
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        class="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-white"
-                                                        viewBox="0 0 24 24"
-                                                        fill="#fff">
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                            clipRule="evenodd"
-                                                        />
-                                                    </svg>
+                                                {/* Positve, Negative, Neutral Filter */}
+                                                <div className="relative">
+                                                    <details className="group [&_summary::-webkit-details-marker]:hidden">
+                                                        <summary
+                                                            className="flex cursor-pointer items-center gap-2 border-b border-gray-400 pb-1 text-white"
+                                                        >
+                                                            <span className="text-sm font-medium"> Rating </span>
+
+                                                            <span className="transition group-open:-rotate-180">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    strokeWidth="1.5"
+                                                                    stroke="currentColor"
+                                                                    className="size-4"
+                                                                >
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                                                </svg>
+                                                            </span>
+                                                        </summary>
+
+                                                        <div className="z-50 group-open:absolute group-open:start-0 group-open:top-auto group-open:mt-2">
+                                                            <div
+                                                                className="rounded-sm border border-neutral-600 bg-neutral-700"
+                                                            >
+                                                                <header className="flex items-center justify-between p-4">
+                                                                    <span className="text-sm text-white text-gray-200 w-24"> 0 Selected </span>
+
+                                                                    <button
+                                                                        type="button"
+                                                                        className="text-sm underline underline-offset-4 text-white"
+                                                                    >
+                                                                        Reset
+                                                                    </button>
+                                                                </header>
+
+                                                                <ul className="space-y-1 border-t border-neutral-600 p-4">
+                                                                    <li>
+                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
+                                                                            <label class="flex items-center cursor-pointer relative">
+                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="positiveCheckbox" />
+                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </label>
+                                                                            <span className="text-sm font-medium text-white">
+                                                                                Positve
+                                                                            </span>
+                                                                        </label>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
+                                                                            <label class="flex items-center cursor-pointer relative">
+                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="negativeCheckbox" />
+                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </label>
+                                                                            <span className="text-sm font-medium text-white">
+                                                                                Negative
+                                                                            </span>
+                                                                        </label>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
+                                                                            <label class="flex items-center cursor-pointer relative">
+                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="neutralCheckbox" />
+                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </label>
+                                                                            <span className="text-sm font-medium text-white">
+                                                                                Neutral
+                                                                            </span>
+                                                                        </label>
+                                                                    </li>
+
+
+
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </details>
                                                 </div>
+
 
                                             </div>
                                         </div>
 
-                                        <div className="overflow-x-auto rounded-xl border border-white border-opacity-5">
+                                        <div className="overflow-x-auto rounded-xl border border-white border-opacity-5 mb-10">
                                             <table className="min-w-full divide-y-2 divide-white divide-opacity-15 text-sm">
                                                 <thead className="text-left text-white">
                                                     <tr>
@@ -445,7 +699,7 @@ export default function Dashboard() {
                                                 </thead>
                                                 <tbody className="divide-y divide-white divide-opacity-15">
                                                     {userData.feedbackData.map((data, index) => (
-                                                        <tr key={index} className = " cursor-pointer hover:bg-white hover:bg-opacity-10 transition duration-300">
+                                                        <tr key={index} className=" cursor-pointer hover:bg-white hover:bg-opacity-10 transition duration-300">
                                                             <td className="px-4 py-2">
                                                                 <div className="inline-flex items-center">
                                                                     <label className="flex items-center cursor-pointer relative">
@@ -458,30 +712,36 @@ export default function Dashboard() {
                                                                     </label>
                                                                 </div>
                                                             </td>
-                                                            <td className="px-4 py-2 whitespace-nowrap text-white font-semibold">{data.Name}</td>
-                                                            <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">{data.Email}</td>
+                                                            <td className="px-4 py-2 whitespace-nowrap text-white font-semibold">{data.name}</td>
+                                                            <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">{data.email}</td>
                                                             <td className="px-4 py-2 whitespace-nowrap">
-                                                                <div className={`inline-block py-1 px-3 rounded-full font-semibold ${data.Category === "Bug" ? "bg-red-500 text-red-100" : data.Category === "Design" ? "bg-blue-500 text-blue-100" : data.Category === "Feature" ? "bg-green-500 text-green-100" : "bg-yellow-500 text-yellow-100 "}`}>
-                                                                    {data.Category}
+                                                                <div className={`inline-block py-1 px-3 rounded-full font-semibold ${data.category === "Bug" ? "bg-red-500 text-red-100" : data.category === "Design" ? "bg-blue-500 text-blue-100" : data.category === "Feature" ? "bg-green-500 text-green-100" : "bg-yellow-500 text-yellow-100 "}`}>
+                                                                    {data.category}
                                                                 </div>
                                                             </td>
-                                                            <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">{data["Date Submitted"]}</td>
+                                                            <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">{data.dateSubmitted}</td>
                                                             <td className="px-4 py-2 whitespace-nowrap text-white">
                                                                 <div className="flex flex-col items-center">
-                                                                    <span className="text-xs text-white opacity-60">{data.Rating}/10</span>
+                                                                    <span className="text-xs text-white opacity-60">{data.rating}/10</span>
                                                                     <div className="w-full bg-white bg-opacity-10 rounded-full h-2.5">
-                                                                        <div className={`h-2.5 rounded-full ${data.Rating <= 4 ? "bg-red-500" : data.Rating <= 7 ? "bg-yellow-500" : "bg-green-500"} bg-opacity-100`} style={{ width: `${data.Rating * 10}%` }}></div>
+                                                                        <div className={`h-2.5 rounded-full ${data.rating <= 4 ? "bg-red-500" : data.rating <= 7 ? "bg-yellow-500" : "bg-green-500"} bg-opacity-100`} style={{ width: `${data.rating * 10}%` }}></div>
                                                                     </div>
                                                                 </div>
                                                             </td>
                                                             <td className="px-4 py-2 whitespace-nowrap">
-                                                                
-                                                                <div className = "text-white opacity-70 cursor-pointer pl-8 hover:opacity-100 transition duration-300">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                                                                </svg>
+                                                                <div className="relative">
+                                                                    <details className="group [&_summary::-webkit-details-marker]:hidden">
+                                                                        <summary className="text-white opacity-70 cursor-pointer pl-8 hover:opacity-100 transition duration-300 flex items-center">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                                                            </svg>
+                                                                        </summary>
+                                                                        <ul className="absolute right-0 mt-2 w-32 rounded-md shadow-lg z-10 bg-neutral-600 border border-neutral-500">
+                                                                            <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-300">View</li>
+                                                                            <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-30">Delete</li>
+                                                                        </ul>
+                                                                    </details>
                                                                 </div>
-
                                                             </td>
                                                         </tr>
                                                     ))}
