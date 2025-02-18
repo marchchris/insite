@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getAuth, signOut } from "firebase/auth";
+
+import { useSelector } from "react-redux";
+
 import FeedbackRatioChart from "../components/pieChart";
 import FeedbackAmountChart from "../components/barChart";
 
@@ -6,6 +10,9 @@ export default function Dashboard() {
     const [currentPage, setCurrentPage] = useState("Overview");
     const [checkAll, setCheckAll] = useState(false);
     const [rowsCheck, setRowsCheck] = useState([]);
+
+
+    const auth = getAuth();
 
     // Handle check All
     const handleCheckAll = () => {
@@ -152,6 +159,16 @@ export default function Dashboard() {
                             <p className="mx-2 opacity-40">/</p>
                             <p className="mx-2">{currentPage}</p>
                         </div>
+
+                        <a href="#" className="text-white text-sm font-medium mr-8" onClick={() => {
+                            signOut(auth)
+                                .then(() => {
+                                    console.log("user signed out");
+                                })
+                                .catch((error) => {
+                                    console.log("error", error);
+                                });
+                        }}>Logout</a>
                     </div>
                     {/* Main Area */}
                     <div className="flex h-full h-screen bg-[#2a2a2a] p-8">
