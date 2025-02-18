@@ -33,7 +33,8 @@ export default function Dashboard() {
             {/* Left side Navbar */}
             <div class="flex w-64 h-screen border-r border-white border-opacity-15">
                 <div className="px-4 py-6 w-full">
-                    <h1 className="text-white text-2xl font-bold px-4">In<span className="text-purple-300">Site</span></h1>
+                    <a href="/" className="text-white text-2xl font-bold px-4">In<span className="text-purple-300">Site</span></a>
+
 
                     <ul className="mt-6 space-y-1">
                         <li>
