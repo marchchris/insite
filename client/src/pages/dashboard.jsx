@@ -1,18 +1,41 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../config/AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 import FeedbackRatioChart from "../components/pieChart";
 import FeedbackAmountChart from "../components/barChart";
 
+import Loading from "../components/loadingScreen";
+
+import { getUserById } from "../util/databaseRoutes";
+
 export default function Dashboard() {
-    const { user, logOut, loading } = useContext(AuthContext);
+    const { user, logOut } = useContext(AuthContext);
 
     const [currentPage, setCurrentPage] = useState("Overview");
     const [checkAll, setCheckAll] = useState(false);
     const [rowsCheck, setRowsCheck] = useState([]);
+    const [isDataLoading, setIsDataLoading] = useState(true);
+
+    const [userData, setUserData] = useState({});
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            const fetchData = async () => {
+                try {
+                    const returnedData = await getUserById(user.uid);
+                    console.log(returnedData);
+                    setUserData(returnedData);
+                    setIsDataLoading(false);
+                } catch (error) {
+                    console.error("Failed to fetch user data", error);
+                }
+            };
+            fetchData();
+        }
+    }, [user]);
 
     // Handle check All
     const handleCheckAll = () => {
@@ -21,7 +44,7 @@ export default function Dashboard() {
             setRowsCheck([]);
         } else {
             // Check all Boxes
-            setRowsCheck([1, 2]); // Assuming 1 and 2 are the IDs of the rows to be checked
+            setRowsCheck(userData.feedbackData.map((_, index) => index));
         }
         setCheckAll(!checkAll);
     };
@@ -34,6 +57,8 @@ export default function Dashboard() {
             setRowsCheck([...rowsCheck, id]);
         }
     };
+
+    if (isDataLoading) return <Loading />;
 
     return (
         <div class="flex flex-row w-screen h-screen bg-[#2a2a2a]">
@@ -333,7 +358,7 @@ export default function Dashboard() {
 
                             <div className="flex flex-col w-full h-full bg-[#2a2a2a] ">
 
-                                <div className="flex flex w-4/6 h-full m-auto justify-center">
+                                <div className="flex flex w-5/6 h-full m-auto justify-center">
                                     <div className="flex flex-col w-full h-full bg-white bg-opacity-5 rounded-xl p-8">
 
                                         {/* Actions Bar */}
@@ -412,69 +437,54 @@ export default function Dashboard() {
                                                         </th>
                                                         <th className="px-4 py-2 font-medium whitespace-nowrap">Name</th>
                                                         <th className="px-4 py-2 font-medium whitespace-nowrap">Email</th>
-                                                        <th className="px-4 py-2 font-medium whitespace-nowrap">Rating</th>
                                                         <th className="px-4 py-2 font-medium whitespace-nowrap">Category</th>
                                                         <th className="px-4 py-2 font-medium whitespace-nowrap">Date Submitted</th>
+                                                        <th className="px-4 py-2 font-medium whitespace-nowrap">Rating</th>
 
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-white divide-opacity-15">
-                                                    <tr>
-                                                        <td className="px-4 py-2">
-                                                            <div class="inline-flex items-center">
-                                                                <label class="flex items-center cursor-pointer relative">
-                                                                    <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="1" checked={rowsCheck.includes(1)} onChange={() => handleCheckRow(1)} />
-                                                                    <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </label>
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">John Doe</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">John@gmail.com</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">6/10</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">Design</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">18/02/2025 17:35:21</td>
-                                                        <td class="px-4 py-2 whitespace-nowrap">
-                                                            <a
-                                                                href="#"
-                                                                class="inline-block rounded-sm bg-purple-400 rounded-md px-5 py-2 text-xs font-medium text-white hover:bg-purple-500 transition duration-300"
-                                                            >
-                                                                View
-                                                            </a>
-                                                        </td>
-                                                    </tr>
+                                                    {userData.feedbackData.map((data, index) => (
+                                                        <tr key={index} className = " cursor-pointer hover:bg-white hover:bg-opacity-10 transition duration-300">
+                                                            <td className="px-4 py-2">
+                                                                <div className="inline-flex items-center">
+                                                                    <label className="flex items-center cursor-pointer relative">
+                                                                        <input type="checkbox" className="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id={index} checked={rowsCheck.includes(index)} onChange={() => handleCheckRow(index)} />
+                                                                        <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
+                                                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </label>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-4 py-2 whitespace-nowrap text-white font-semibold">{data.Name}</td>
+                                                            <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">{data.Email}</td>
+                                                            <td className="px-4 py-2 whitespace-nowrap">
+                                                                <div className={`inline-block py-1 px-3 rounded-full font-semibold ${data.Category === "Bug" ? "bg-red-500 text-red-100" : data.Category === "Design" ? "bg-blue-500 text-blue-100" : data.Category === "Feature" ? "bg-green-500 text-green-100" : "bg-yellow-500 text-yellow-100 "}`}>
+                                                                    {data.Category}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">{data["Date Submitted"]}</td>
+                                                            <td className="px-4 py-2 whitespace-nowrap text-white">
+                                                                <div className="flex flex-col items-center">
+                                                                    <span className="text-xs text-white opacity-60">{data.Rating}/10</span>
+                                                                    <div className="w-full bg-white bg-opacity-10 rounded-full h-2.5">
+                                                                        <div className={`h-2.5 rounded-full ${data.Rating <= 4 ? "bg-red-500" : data.Rating <= 7 ? "bg-yellow-500" : "bg-green-500"} bg-opacity-100`} style={{ width: `${data.Rating * 10}%` }}></div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-4 py-2 whitespace-nowrap">
+                                                                
+                                                                <div className = "text-white opacity-70 cursor-pointer pl-8 hover:opacity-100 transition duration-300">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                                                </svg>
+                                                                </div>
 
-                                                    <tr>
-                                                        <td className="px-4 py-2">
-                                                            <div class="inline-flex items-center">
-                                                                <label class="flex items-center cursor-pointer relative">
-                                                                    <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="2" checked={rowsCheck.includes(2)} onChange={() => handleCheckRow(2)} />
-                                                                    <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </label>
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">Jane Doe</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">Jane@gmail.com</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">8/10</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">Development</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">16/02/2025 9:46:04</td>
-                                                        <td class="px-4 py-2 whitespace-nowrap">
-                                                            <a
-                                                                href="#"
-                                                                class="inline-block rounded-sm bg-purple-400 rounded-md px-5 py-2 text-xs font-medium text-white hover:bg-purple-500 transition duration-300"
-                                                            >
-                                                                View
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-
+                                                            </td>
+                                                        </tr>
+                                                    ))}
                                                 </tbody>
                                             </table>
                                         </div>
