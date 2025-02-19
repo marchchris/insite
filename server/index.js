@@ -4,6 +4,8 @@ require('dotenv').config();
 
 const PORT = process.env.PORT;
 const uri = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DB_NAME;
+const collectionName = process.env.MONGODB_COLLECTION_NAME;
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON requests
@@ -32,14 +34,19 @@ app.post("/users", async (req, res) => {
     try {
         const { userID, resolvedAmount, feedbackData } = req.body;
         const apiKey = generateApiKey();
-        const database = client.db("InSiteDatabase");
-        const users = database.collection("Users");
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
 
         const newUser = {
             userID,
             apiKey,
             resolvedAmount,
-            feedbackData
+            feedbackData,
+            formSettings: {
+                theme: "dark",
+                formTitle: "Feedback Form",
+                formDescription: "Please provide feedback below.",
+            }
         };
 
         const result = await users.insertOne(newUser);
@@ -59,8 +66,8 @@ app.post("/users", async (req, res) => {
 app.get("/users/:userID", async (req, res) => {
     try {
         const userID = req.params.userID;
-        const database = client.db("InSiteDatabase");
-        const users = database.collection("Users");
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
 
         const user = await users.findOne({ userID });
 
@@ -75,13 +82,35 @@ app.get("/users/:userID", async (req, res) => {
     }
 });
 
+// API: Retrieve user form settings by API key
+app.get("/userSettings/:apiKey", async (req, res) => {
+    try {
+        
+        const apiKey = req.params.apiKey;
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
+        
+        const user = await users.findOne({ apiKey });
+
+        if (user) {
+            res.status(200).json(user.formSettings);
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
 //API: Delete feedback object from feedbackData of a user by passing in the index of feedbackID
 app.delete("/users/:userID/feedback/:index", async (req, res) => {
     try {
         const userID = req.params.userID;
         const index = parseInt(req.params.index);
-        const database = client.db("InSiteDatabase");
-        const users = database.collection("Users");
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
 
         // Remove feedback object from feedbackData array by index
         const result = await users.updateOne(
@@ -109,8 +138,8 @@ app.delete("/users/:userID/feedback/:index", async (req, res) => {
 app.delete("/users/:userID/feedback", async (req, res) => {
     try {
         const userID = req.params.userID;
-        const database = client.db("InSiteDatabase");
-        const users = database.collection("Users");
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
 
         // Remove all feedbackData for the user
         const result = await users.updateOne(
@@ -135,8 +164,8 @@ app.post("/users/:userID/feedback", async (req, res) => {
         const userID = req.params.userID;
         const feedbackObject = req.body; // Expecting feedbackObject from request body
 
-        const database = client.db("InSiteDatabase");
-        const users = database.collection("Users");
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
 
         // Update user's feedbackData array with the new feedbackObject
         const result = await users.updateOne(

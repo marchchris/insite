@@ -6,7 +6,6 @@ import { sendEmailVerification } from "firebase/auth";
 import Navbar from "../components/navBar";
 import Loading from "../components/loadingScreen";
 
-import MailImage from "../imgs/mailImage.svg";
 
 
 
@@ -26,7 +25,7 @@ const VerifyEmail = () => {
         const interval = setInterval(() => {
             user.reload().then(() => {
                 if (user.emailVerified) {
-                    navigate("/dashboard");
+                    window.location.reload();
                 }
             });
         }, 3000);

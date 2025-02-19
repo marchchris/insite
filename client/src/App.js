@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
 
 import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
@@ -9,6 +8,8 @@ import AuthProvider from "./config/AuthProvider";
 
 import ResetPassword from "./pages/resetpassword";
 import NotFound from "./pages/404";
+
+import ApiPrivateRoute from "./util/apiPrivateRoute";
 
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path = "reset-password" element={<ResetPassword />} />
+            <Route path = "/form/:apiKey" element={<ApiPrivateRoute></ApiPrivateRoute>} />
 
             <Route path="*" element={<NotFound/>} />
 
