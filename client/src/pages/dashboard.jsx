@@ -29,6 +29,8 @@ export default function Dashboard() {
         negativeChange: 0,
     });
 
+    const [resolvedNumber, setResolvedNumber] = useState(0);
+
     const [categoryFilter, setCategoryFilter] = useState([]);
     const [ratingFilter, setRatingFilter] = useState([]);
 
@@ -41,12 +43,15 @@ export default function Dashboard() {
             const fetchData = async () => {
                 try {
                     const returnedData = await getUserById(user.uid);
-                    console.log(returnedData);
                     setUserData(returnedData);
-                    setIsDataLoading(false);
+
+
 
                     // Calculate feedback statistics
                     updateFeedbackStats(returnedData.feedbackData);
+                    updateResolvedNumber(returnedData);
+                    setIsDataLoading(false);
+
                 } catch (error) {
                     console.error("Failed to fetch user data", error);
                 }
@@ -77,6 +82,12 @@ export default function Dashboard() {
         setSelectedFeedback(data);
     };
 
+    const updateResolvedNumber = (data) => {
+        const resolved = data.resolvedAmount;
+        setResolvedNumber(resolved);
+    };
+
+
     const updateFeedbackStats = (feedbackData) => {
         const now = new Date();
         const last7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)));
@@ -85,7 +96,6 @@ export default function Dashboard() {
         const received = last7Days.length;
         const positive = last7Days.filter(fb => fb.rating > 7).length;
         const negative = last7Days.filter(fb => fb.rating <= 4).length;
-        const resolved = feedbackData.filter(fb => fb.resolved === true).length;
 
         const previousReceived = previous7Days.length;
         const previousPositive = previous7Days.filter(fb => fb.Rating > 7).length;
@@ -99,7 +109,6 @@ export default function Dashboard() {
             received,
             positive,
             negative,
-            resolved,
             receivedChange,
             positiveChange,
             negativeChange,
@@ -120,6 +129,8 @@ export default function Dashboard() {
                 setUserData({ ...userData, feedbackData: updatedFeedbackData });
                 // Update feedback statistics
                 updateFeedbackStats(updatedFeedbackData);
+                // Update resolved number
+                setResolvedNumber(resolvedNumber + 1);
             } catch (error) {
                 console.error("Failed to delete feedback", error);
             }
@@ -130,9 +141,12 @@ export default function Dashboard() {
     const handleDeleteAllFeedback = async () => {
         if (window.confirm("Are you sure you want to delete all feedback?")) {
             try {
+                const feedbackCount = userData.feedbackData.length;
                 await deleteAllFeedback(user.uid);
                 setUserData({ ...userData, feedbackData: [] });
                 updateFeedbackStats([]);
+                // Update resolved number
+                setResolvedNumber(resolvedNumber + feedbackCount);
             } catch (error) {
                 console.error("Failed to delete all feedback", error);
             }
@@ -474,7 +488,7 @@ export default function Dashboard() {
                                             <p className="text-sm text-white">Feedback Resolved</p>
                                             <p className="text-xs text-white opacity-40">All Time</p>
 
-                                            <p className="text-2xl font-medium text-white">{feedbackStats.resolved}</p>
+                                            <p className="text-2xl font-medium text-white">{resolvedNumber}</p>
                                         </div>
                                     </article>
 
@@ -496,7 +510,12 @@ export default function Dashboard() {
                                             <p className="text-xs text-white opacity-40">All Time</p>
                                             <div className="flex flex-row w-full h-full justify-center items-center">
                                                 <div className="flex w-2/3 h-full justify-center items-center">
-                                                    <FeedbackRatioChart feedbackData={userData.feedbackData} />
+                                                    {/* If no feedback is pending, display no pending feedback message */}
+                                                    {userData.feedbackData.length === 0 ? (
+                                                        <p className="text-white text-opacity-40">No Feedback Pending</p>
+                                                    ) : (
+                                                        <FeedbackRatioChart feedbackData={userData.feedbackData} />
+                                                    )}
                                                 </div>
                                                 <div className="flex w-1/3 h-full justify-center items-center">
                                                     <ul className="space-y-3">
@@ -679,6 +698,12 @@ export default function Dashboard() {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-white divide-opacity-15">
+                                                    {/* If no feedback is available, display a message */}
+                                                    {filteredFeedbackData.length === 0 && (
+                                                        <tr>
+                                                            <td colSpan="6" className="text-center text-white opacity-40 py-4">You have no current feedback</td>
+                                                        </tr>
+                                                    )}
                                                     {filteredFeedbackData.map((data, index) => (
                                                         <tr key={index} className=" cursor-pointer hover:bg-white hover:bg-opacity-10 transition duration-300" onClick={(event) => handleRowClick(data, event)}>
                                                             <td className="px-4 py-2">
@@ -719,7 +744,7 @@ export default function Dashboard() {
                                                                         </summary>
                                                                         <ul className="absolute right-0 mt-2 w-32 rounded-md shadow-lg z-10 bg-neutral-600 border border-neutral-500">
                                                                             <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-300" onClick={(event) => handleRowTabViewClick(data, event)}>View</li>
-                                                                            <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-30" onClick={(event) => handleRowTabDeleteClick(data, event)}>Delete</li>
+                                                                            <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-30" onClick={(event) => handleRowTabDeleteClick(data, event)}>Resolve</li>
                                                                         </ul>
                                                                     </details>
                                                                 </div>
@@ -783,7 +808,7 @@ export default function Dashboard() {
                             </div>
                         </dl>
 
-                        <button className="mt-10 bg-red-500 text-white  px-4 py-2 rounded hover:bg-red-600 transition duration-300" onClick={(event) => handleRowTabDeleteClick(selectedFeedback, event)}>Delete</button>
+                        <button className="mt-10 bg-red-500 text-white  px-4 py-2 rounded hover:bg-red-600 transition duration-300" onClick={(event) => handleRowTabDeleteClick(selectedFeedback, event)}>Resolve</button>
                         <button className="mt-10 bg-purple-500 text-white mx-2 px-4 py-2 rounded hover:bg-purple-600 transition duration-300" onClick={handleCloseModal}>Close</button>
                     </div>
                 </div>
