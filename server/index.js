@@ -21,6 +21,40 @@ async function connectDB() {
     }
 }
 
+// Function to generate a random API key with a mix of uppercase, lowercase, and numbers
+function generateApiKey() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    return [...Array(16)].map(() => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+// API: Create a new user
+app.post("/users", async (req, res) => {
+    try {
+        const { userID, resolvedAmount, feedbackData } = req.body;
+        const apiKey = generateApiKey();
+        const database = client.db("InSiteDatabase");
+        const users = database.collection("Users");
+
+        const newUser = {
+            userID,
+            apiKey,
+            resolvedAmount,
+            feedbackData
+        };
+
+        const result = await users.insertOne(newUser);
+
+        if (result.acknowledged) {
+            res.status(201).json({ message: "User created successfully", apiKey });
+        } else {
+            res.status(500).json({ message: "Failed to create user" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 // API: Retrieve user by userID
 app.get("/users/:userID", async (req, res) => {
     try {

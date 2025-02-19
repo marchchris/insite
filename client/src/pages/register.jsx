@@ -1,6 +1,8 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../config/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { sendEmailVerification } from "firebase/auth";
+import { createUserInDatabase } from "../util/databaseRoutes";
 
 import Navbar from "../components/navBar";
 import Loading from "../components/loadingScreen";
@@ -9,7 +11,6 @@ export default function Register() {
     const [error, setError] = useState("");
     const { createUser, user, loading, cancelLoading } = useContext(AuthContext);
     const navigate = useNavigate();
-
 
     if (loading) {
         return (
@@ -48,7 +49,27 @@ export default function Register() {
 
         createUser(email, password)
             .then((result) => {
-                navigate("/dashboard");
+                const userData = {
+                    userID: result.user.uid,
+                    resolvedAmount: 0,
+                    feedbackData: []
+                };
+
+                createUserInDatabase(userData)
+                    .then(() => {
+                        sendEmailVerification(result.user)
+                            .then(() => {
+                                navigate("/dashboard");
+                            })
+                            .catch((error) => {
+                                setError("Failed to send verification email. Please try again.");
+                                console.log(error);
+                            });
+                    })
+                    .catch((error) => {
+                        setError("Failed to create user in database. Please try again.");
+                        console.log(error);
+                    });
             })
             .catch((error) => {
                 const friendlyMessage = firebaseErrorMessages[error.code] || "An unexpected error occurred. Please try again.";
@@ -56,7 +77,6 @@ export default function Register() {
                 console.log(error);
                 cancelLoading();
             });
-
     };
 
     return (

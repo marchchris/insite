@@ -3,6 +3,8 @@ import { AuthContext } from "./config/AuthProvider";
 import PropTypes from "prop-types";
 import { Navigate } from "react-router-dom";
 
+import VerifyEmail from "./pages/verifyEmail";
+
 const PrivateRoute = ({ children }) => {
   const { loading, user } = useContext(AuthContext);
 
@@ -11,13 +13,14 @@ const PrivateRoute = ({ children }) => {
   }
 
   if (user) {
+    if (!user.emailVerified) {
+      return <VerifyEmail />;
+    }
     return children;
   }
 
   return <Navigate to="/login" />;
 };
-
-
 
 PrivateRoute.propTypes = {
   children: PropTypes.node,

@@ -7,7 +7,9 @@ import Register from "./pages/register";
 import PrivateRoute from "./PrivateRoute";
 import AuthProvider from "./config/AuthProvider";
 
-import Loading from "./components/loadingScreen";
+import ResetPassword from "./pages/resetpassword";
+import NotFound from "./pages/404";
+
 
 export default function App() {
   return (
@@ -19,6 +21,10 @@ export default function App() {
             <Route path="dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path = "reset-password" element={<ResetPassword />} />
+
+            <Route path="*" element={<NotFound/>} />
+
           </Route>
         </Routes>
       </BrowserRouter>

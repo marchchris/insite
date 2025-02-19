@@ -8,6 +8,22 @@ export async function getUserById(userID) {
   return await response.json();
 }
 
+// Function to create a new user in the database
+export async function createUserInDatabase(userData) {
+  const response = await fetch(`/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create user in database");
+  }
+  return await response.json();
+}
+
 // Function to add feedback object to feedbackData of a user
 export async function addFeedback(userID, feedbackObject) {
   const response = await fetch(`/users/${userID}/feedback`, {

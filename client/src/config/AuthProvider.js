@@ -3,6 +3,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
@@ -29,6 +30,10 @@ const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
+  const resetPassword = (email) => {
+    setLoading(true);
+    return sendPasswordResetEmail(auth, email);
+  };
 
   const cancelLoading = () => {
     setLoading(false);
@@ -52,7 +57,8 @@ const AuthProvider = ({ children }) => {
     loginUser,
     logOut,
     loading,
-    cancelLoading, // Add this line
+    cancelLoading,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>;
