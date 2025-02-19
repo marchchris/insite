@@ -7,7 +7,7 @@ import FeedbackAmountChart from "../components/barChart";
 
 import Loading from "../components/loadingScreen";
 
-import { getUserById } from "../util/databaseRoutes";
+import { getUserById, deleteFeedback, deleteAllFeedback } from "../util/databaseRoutes";
 
 export default function Dashboard() {
     const { user, logOut } = useContext(AuthContext);
@@ -29,6 +29,11 @@ export default function Dashboard() {
         negativeChange: 0,
     });
 
+    const [categoryFilter, setCategoryFilter] = useState([]);
+    const [ratingFilter, setRatingFilter] = useState([]);
+
+    const [selectedFeedback, setSelectedFeedback] = useState(null);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,33 +46,7 @@ export default function Dashboard() {
                     setIsDataLoading(false);
 
                     // Calculate feedback statistics
-                    const feedbackData = returnedData.feedbackData;
-                    const now = new Date();
-                    const last7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)));
-                    const previous7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)) && new Date(fb["Date Submitted"]) < new Date(now.setDate(now.getDate() + 7)));
-
-                    const received = last7Days.length;
-                    const positive = last7Days.filter(fb => fb.rating > 7).length;
-                    const negative = last7Days.filter(fb => fb.rating <= 4).length;
-                    const resolved = feedbackData.filter(fb => fb.resolved === true).length;
-
-                    const previousReceived = previous7Days.length;
-                    const previousPositive = previous7Days.filter(fb => fb.Rating > 7).length;
-                    const previousNegative = previous7Days.filter(fb => fb.Rating <= 4).length;
-
-                    const receivedChange = ((received - previousReceived) / (previousReceived || 1)) * 100;
-                    const positiveChange = ((positive - previousPositive) / (previousPositive || 1)) * 100;
-                    const negativeChange = ((negative - previousNegative) / (previousNegative || 1)) * 100;
-
-                    setFeedbackStats({
-                        received,
-                        positive,
-                        negative,
-                        resolved,
-                        receivedChange,
-                        positiveChange,
-                        negativeChange,
-                    });
+                    updateFeedbackStats(returnedData.feedbackData);
                 } catch (error) {
                     console.error("Failed to fetch user data", error);
                 }
@@ -75,6 +54,99 @@ export default function Dashboard() {
             fetchData();
         }
     }, [user]);
+
+    const handleCategoryChange = (category) => {
+        setCategoryFilter(prev =>
+            prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+        );
+    };
+
+    const handleRatingChange = (rating) => {
+        setRatingFilter(prev =>
+            prev.includes(rating) ? prev.filter(r => r !== rating) : [...prev, rating]
+        );
+    };
+
+    const handleRowClick = (data, event) => {
+        if (event.target.closest(".dropdown-menu")) return;
+        setSelectedFeedback(data);
+    };
+
+    // Handle Row Tab View Click
+    const handleRowTabViewClick = (data, event) => {
+        setSelectedFeedback(data);
+    };
+
+    const updateFeedbackStats = (feedbackData) => {
+        const now = new Date();
+        const last7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)));
+        const previous7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)) && new Date(fb["Date Submitted"]) < new Date(now.setDate(now.getDate() + 7)));
+
+        const received = last7Days.length;
+        const positive = last7Days.filter(fb => fb.rating > 7).length;
+        const negative = last7Days.filter(fb => fb.rating <= 4).length;
+        const resolved = feedbackData.filter(fb => fb.resolved === true).length;
+
+        const previousReceived = previous7Days.length;
+        const previousPositive = previous7Days.filter(fb => fb.Rating > 7).length;
+        const previousNegative = previous7Days.filter(fb => fb.Rating <= 4).length;
+
+        const receivedChange = ((received - previousReceived) / (previousReceived || 1)) * 100;
+        const positiveChange = ((positive - previousPositive) / (previousPositive || 1)) * 100;
+        const negativeChange = ((negative - previousNegative) / (previousNegative || 1)) * 100;
+
+        setFeedbackStats({
+            received,
+            positive,
+            negative,
+            resolved,
+            receivedChange,
+            positiveChange,
+            negativeChange,
+        });
+    };
+
+    // Handle Row Tab Delete Click
+    const handleRowTabDeleteClick = async (data, event) => {
+        event.stopPropagation();
+        if (window.confirm("Are you sure you want to delete this feedback?")) {
+            try {
+                // Get index of feedback object in feedbackData list
+                const index = userData.feedbackData.findIndex(fb => fb === data);
+                // Delete feedback by index
+                await deleteFeedback(user.uid, index);
+                // Remove feedback from local state
+                const updatedFeedbackData = userData.feedbackData.filter((_, i) => i !== index);
+                setUserData({ ...userData, feedbackData: updatedFeedbackData });
+                // Update feedback statistics
+                updateFeedbackStats(updatedFeedbackData);
+            } catch (error) {
+                console.error("Failed to delete feedback", error);
+            }
+        }
+    };
+
+    // Handle delete all feedback
+    const handleDeleteAllFeedback = async () => {
+        if (window.confirm("Are you sure you want to delete all feedback?")) {
+            try {
+                await deleteAllFeedback(user.uid);
+                setUserData({ ...userData, feedbackData: [] });
+                updateFeedbackStats([]);
+            } catch (error) {
+                console.error("Failed to delete all feedback", error);
+            }
+        }
+    };
+
+    const handleCloseModal = () => {
+        setSelectedFeedback(null);
+    };
+
+    const filteredFeedbackData = userData.feedbackData ? userData.feedbackData.filter(data =>
+        (categoryFilter.length === 0 || categoryFilter.includes(data.category)) &&
+        (ratingFilter.length === 0 || ratingFilter.includes(data.rating <= 4 ? "Negative" : data.rating <= 7 ? "Neutral" : "Positive"))
+    ) : [];
 
     // Handle check All
     const handleCheckAll = () => {
@@ -458,12 +530,13 @@ export default function Dashboard() {
 
                                 <div className="flex flex w-5/6 h-full m-auto justify-center">
                                     <div className="flex flex-col w-full h-full bg-white bg-opacity-5 rounded-xl p-8">
+                                        <p className="text-white text-opacity-40">Results: <span className="text-white font-semibold">{filteredFeedbackData.length}</span></p>
 
                                         {/* Actions Bar */}
                                         <div className="flex justify-between items-center py-3">
                                             <div>
 
-                                                <div className="flex items-center bg-purple-400 p-2 cursor-pointer rounded-lg" style={{ display: checkAll ? "flex" : "none" }}>
+                                                <div className="flex items-center bg-purple-400 p-2 cursor-pointer rounded-lg" style={{ display: checkAll ? "flex" : "none" }} onClick={handleDeleteAllFeedback}>
                                                     {/* Delete All Button. Only shown if check all box is checked */}
                                                     <p className="text-white text-xs">Delete All</p>
 
@@ -498,79 +571,26 @@ export default function Dashboard() {
                                                                 className="rounded-sm border border-neutral-600 bg-neutral-700"
                                                             >
                                                                 <header className="flex items-center justify-between p-4">
-                                                                    <span className="text-sm text-white text-gray-200"> 0 Selected </span>
+                                                                    <span className="text-sm text-white text-gray-200"> {categoryFilter.length} Selected </span>
 
                                                                     <button
                                                                         type="button"
                                                                         className="text-sm underline underline-offset-4 text-white"
+                                                                        onClick={() => setCategoryFilter([])}
                                                                     >
                                                                         Reset
                                                                     </button>
                                                                 </header>
 
                                                                 <ul className="space-y-1 border-t border-neutral-600 p-4">
-                                                                    <li>
-                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
-                                                                            <label class="flex items-center cursor-pointer relative">
-                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="bugCheckbox" />
-                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                                    </svg>
-                                                                                </span>
+                                                                    {["Bug", "Design", "Feature", "Recommend"].map(category => (
+                                                                        <li key={category}>
+                                                                            <label className="inline-flex items-center gap-2">
+                                                                                <input type="checkbox" className="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" checked={categoryFilter.includes(category)} onChange={() => handleCategoryChange(category)} />
+                                                                                <span className="text-sm font-medium text-white">{category}</span>
                                                                             </label>
-                                                                            <span className="text-sm font-medium text-white">
-                                                                                Bugs
-                                                                            </span>
-                                                                        </label>
-                                                                    </li>
-                                                                    <li>
-                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
-                                                                            <label class="flex items-center cursor-pointer relative">
-                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="designCheckbox" />
-                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                                    </svg>
-                                                                                </span>
-                                                                            </label>
-                                                                            <span className="text-sm font-medium text-white">
-                                                                                Design
-                                                                            </span>
-                                                                        </label>
-                                                                    </li>
-                                                                    <li>
-                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
-                                                                            <label class="flex items-center cursor-pointer relative">
-                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="featureCheckbox" />
-                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                                    </svg>
-                                                                                </span>
-                                                                            </label>
-                                                                            <span className="text-sm font-medium text-white">
-                                                                                Features
-                                                                            </span>
-                                                                        </label>
-                                                                    </li>
-                                                                    <li>
-                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
-                                                                            <label class="flex items-center cursor-pointer relative">
-                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="recommendationCheckbox" />
-                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                                    </svg>
-                                                                                </span>
-                                                                            </label>
-                                                                            <span className="text-sm font-medium text-white">
-                                                                                Recommendations
-                                                                            </span>
-                                                                        </label>
-                                                                    </li>
-
-
+                                                                        </li>
+                                                                    ))}
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -604,65 +624,26 @@ export default function Dashboard() {
                                                                 className="rounded-sm border border-neutral-600 bg-neutral-700"
                                                             >
                                                                 <header className="flex items-center justify-between p-4">
-                                                                    <span className="text-sm text-white text-gray-200 w-24"> 0 Selected </span>
+                                                                    <span className="text-sm text-white text-gray-200 w-24"> {ratingFilter.length} Selected </span>
 
                                                                     <button
                                                                         type="button"
                                                                         className="text-sm underline underline-offset-4 text-white"
+                                                                        onClick={() => setRatingFilter([])}
                                                                     >
                                                                         Reset
                                                                     </button>
                                                                 </header>
 
                                                                 <ul className="space-y-1 border-t border-neutral-600 p-4">
-                                                                    <li>
-                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
-                                                                            <label class="flex items-center cursor-pointer relative">
-                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="positiveCheckbox" />
-                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                                    </svg>
-                                                                                </span>
+                                                                    {["Positive", "Neutral", "Negative"].map(rating => (
+                                                                        <li key={rating}>
+                                                                            <label className="inline-flex items-center gap-2">
+                                                                                <input type="checkbox" className="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" checked={ratingFilter.includes(rating)} onChange={() => handleRatingChange(rating)} />
+                                                                                <span className="text-sm font-medium text-white">{rating}</span>
                                                                             </label>
-                                                                            <span className="text-sm font-medium text-white">
-                                                                                Positve
-                                                                            </span>
-                                                                        </label>
-                                                                    </li>
-                                                                    <li>
-                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
-                                                                            <label class="flex items-center cursor-pointer relative">
-                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="negativeCheckbox" />
-                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                                    </svg>
-                                                                                </span>
-                                                                            </label>
-                                                                            <span className="text-sm font-medium text-white">
-                                                                                Negative
-                                                                            </span>
-                                                                        </label>
-                                                                    </li>
-                                                                    <li>
-                                                                        <label htmlFor="FilterInStock" className="inline-flex items-center gap-2">
-                                                                            <label class="flex items-center cursor-pointer relative">
-                                                                                <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="neutralCheckbox" />
-                                                                                <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
-                                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                                    </svg>
-                                                                                </span>
-                                                                            </label>
-                                                                            <span className="text-sm font-medium text-white">
-                                                                                Neutral
-                                                                            </span>
-                                                                        </label>
-                                                                    </li>
-
-
-
+                                                                        </li>
+                                                                    ))}
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -698,8 +679,8 @@ export default function Dashboard() {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-white divide-opacity-15">
-                                                    {userData.feedbackData.map((data, index) => (
-                                                        <tr key={index} className=" cursor-pointer hover:bg-white hover:bg-opacity-10 transition duration-300">
+                                                    {filteredFeedbackData.map((data, index) => (
+                                                        <tr key={index} className=" cursor-pointer hover:bg-white hover:bg-opacity-10 transition duration-300" onClick={(event) => handleRowClick(data, event)}>
                                                             <td className="px-4 py-2">
                                                                 <div className="inline-flex items-center">
                                                                     <label className="flex items-center cursor-pointer relative">
@@ -729,7 +710,7 @@ export default function Dashboard() {
                                                                 </div>
                                                             </td>
                                                             <td className="px-4 py-2 whitespace-nowrap">
-                                                                <div className="relative">
+                                                                <div className="relative dropdown-menu">
                                                                     <details className="group [&_summary::-webkit-details-marker]:hidden">
                                                                         <summary className="text-white opacity-70 cursor-pointer pl-8 hover:opacity-100 transition duration-300 flex items-center">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
@@ -737,8 +718,8 @@ export default function Dashboard() {
                                                                             </svg>
                                                                         </summary>
                                                                         <ul className="absolute right-0 mt-2 w-32 rounded-md shadow-lg z-10 bg-neutral-600 border border-neutral-500">
-                                                                            <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-300">View</li>
-                                                                            <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-30">Delete</li>
+                                                                            <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-300" onClick={(event) => handleRowTabViewClick(data, event)}>View</li>
+                                                                            <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-30" onClick={(event) => handleRowTabDeleteClick(data, event)}>Delete</li>
                                                                         </ul>
                                                                     </details>
                                                                 </div>
@@ -757,6 +738,56 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+            {selectedFeedback && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-8 w-1/3">
+
+                        <dl className="-my-3 text-sm">
+                            <div
+                                className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4 even:bg-neutral-700"
+                            >
+                                <dt className="font-medium text-white">Name</dt>
+                                <dd className="sm:col-span-2 text-white opacity-90">{selectedFeedback.name}</dd>
+                            </div>
+
+                            <div
+                                className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4 even:bg-neutral-700"
+                            >
+                                <dt className="font-medium text-white">Email</dt>
+                                <dd className="sm:col-span-2 text-white opacity-90">{selectedFeedback.email}</dd>
+                            </div>
+                            <div
+                                className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4 even:bg-neutral-700"
+                            >
+                                <dt className="font-medium text-white">Category</dt>
+                                <dd className="sm:col-span-2 text-white opacity-90">{selectedFeedback.category}</dd>
+                            </div>
+                            <div
+                                className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4 even:bg-neutral-700"
+                            >
+                                <dt className="font-medium text-white">Date</dt>
+                                <dd className="sm:col-span-2 text-white opacity-90">{selectedFeedback.dateSubmitted}</dd>
+                            </div>
+                            <div
+                                className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4 even:bg-neutral-700"
+                            >
+                                <dt className="font-medium text-white">Rating</dt>
+                                <dd className="sm:col-span-2 text-white opacity-90">{selectedFeedback.rating}/10</dd>
+                            </div>
+
+                            <dt className="font-medium text-white text-center mt-10 mb-2">Message</dt>
+                            <div
+                                className="p-3 sm:grid-cols-3 sm:gap-4 border border-neutral-600 rounded-md text-center"
+                            >
+                                <dd className="sm:col-span-2 text-white opacity-90">{selectedFeedback.message}</dd>
+                            </div>
+                        </dl>
+
+                        <button className="mt-10 bg-red-500 text-white  px-4 py-2 rounded hover:bg-red-600 transition duration-300" onClick={(event) => handleRowTabDeleteClick(selectedFeedback, event)}>Delete</button>
+                        <button className="mt-10 bg-purple-500 text-white mx-2 px-4 py-2 rounded hover:bg-purple-600 transition duration-300" onClick={handleCloseModal}>Close</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

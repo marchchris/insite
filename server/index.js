@@ -41,6 +41,60 @@ app.get("/users/:userID", async (req, res) => {
     }
 });
 
+//API: Delete feedback object from feedbackData of a user by passing in the index of feedbackID
+app.delete("/users/:userID/feedback/:index", async (req, res) => {
+    try {
+        const userID = req.params.userID;
+        const index = parseInt(req.params.index);
+        const database = client.db("InSiteDatabase");
+        const users = database.collection("Users");
+
+        // Remove feedback object from feedbackData array by index
+        const result = await users.updateOne(
+            { userID },
+            { $unset: { [`feedbackData.${index}`]: 1 } }
+        );
+
+        if (result.matchedCount > 0) {
+            // Remove the null value from the array
+            await users.updateOne(
+                { userID },
+                { $pull: { feedbackData: null } }
+            );
+            res.status(200).json({ message: "Feedback deleted successfully" });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+// API: Delete all feedbackData for a user
+app.delete("/users/:userID/feedback", async (req, res) => {
+    try {
+        const userID = req.params.userID;
+        const database = client.db("InSiteDatabase");
+        const users = database.collection("Users");
+
+        // Remove all feedbackData for the user
+        const result = await users.updateOne(
+            { userID },
+            { $set: { feedbackData: [] } }
+        );
+
+        if (result.matchedCount > 0) {
+            res.status(200).json({ message: "All feedback deleted successfully" });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 // API: Add feedback object to feedbackData of a user
 app.post("/users/:userID/feedback", async (req, res) => {
     try {

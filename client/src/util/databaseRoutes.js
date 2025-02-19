@@ -1,4 +1,3 @@
-
 // Function to retrieve user by userID
 export async function getUserById(userID) {
     console.log("Fetching user data for ", userID);
@@ -21,6 +20,30 @@ export async function addFeedback(userID, feedbackObject) {
 
   if (!response.ok) {
     throw new Error("Failed to add feedback");
+  }
+  return await response.json();
+}
+
+// Function to delete feedback object from feedbackData of a user by index
+export async function deleteFeedback(userID, index) {
+  const response = await fetch(`/users/${userID}/feedback/${index}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete feedback");
+  }
+  return await response.json();
+}
+
+// Function to delete all feedbackData of a user
+export async function deleteAllFeedback(userID) {
+  const response = await fetch(`/users/${userID}/feedback`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete all feedback");
   }
   return await response.json();
 }
