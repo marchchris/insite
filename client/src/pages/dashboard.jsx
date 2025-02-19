@@ -9,6 +9,8 @@ import Loading from "../components/loadingScreen";
 
 import { getUserById, deleteFeedback, deleteAllFeedback } from "../util/databaseRoutes";
 
+
+
 export default function Dashboard() {
     const { user, logOut } = useContext(AuthContext);
 
@@ -18,6 +20,15 @@ export default function Dashboard() {
     const [isDataLoading, setIsDataLoading] = useState(true);
 
     const [userData, setUserData] = useState({});
+
+    const dateOptions = {
+        year: 'numeric',
+        month: 'long', // Use "short" for abbreviations like Feb
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true, // 12-hour clock format
+      };
 
     const [feedbackStats, setFeedbackStats] = useState({
         received: 0,
@@ -73,7 +84,7 @@ export default function Dashboard() {
     };
 
     const handleRowClick = (data, event) => {
-        if (event.target.closest(".dropdown-menu")) return;
+        if (event.target.closest(".dropdown-menu") || event.target.closest("input[type='checkbox']")) return;
         setSelectedFeedback(data);
     };
 
@@ -153,6 +164,22 @@ export default function Dashboard() {
         }
     };
 
+    const handleResolveAllSelected = async () => {
+        if (window.confirm("Are you sure you want to resolve all selected feedback?")) {
+            try {
+                const updatedFeedbackData = userData.feedbackData.filter((_, index) => !rowsCheck.includes(index));
+                await Promise.all(rowsCheck.map(index => deleteFeedback(user.uid, index)));
+                setUserData({ ...userData, feedbackData: updatedFeedbackData });
+                updateFeedbackStats(updatedFeedbackData);
+                setResolvedNumber(resolvedNumber + rowsCheck.length);
+                setRowsCheck([]);
+                setCheckAll(false);
+            } catch (error) {
+                console.error("Failed to resolve selected feedback", error);
+            }
+        }
+    };
+
     const handleCloseModal = () => {
         setSelectedFeedback(null);
     };
@@ -177,9 +204,20 @@ export default function Dashboard() {
     // Handle individual row check
     const handleCheckRow = (id) => {
         if (rowsCheck.includes(id)) {
-            setRowsCheck(rowsCheck.filter(rowId => rowId !== id));
+            const updatedRowsCheck = rowsCheck.filter(rowId => rowId !== id);
+            setRowsCheck(updatedRowsCheck);
+            if (updatedRowsCheck.length < userData.feedbackData.length) {
+                setCheckAll(false);
+            }
         } else {
-            setRowsCheck([...rowsCheck, id]);
+            const updatedRowsCheck = [...rowsCheck, id];
+            setRowsCheck(updatedRowsCheck);
+            if (updatedRowsCheck.length === userData.feedbackData.length) {
+                setCheckAll(true);
+            } else {
+                setCheckAll(false);
+
+            }
         }
     };
 
@@ -222,7 +260,10 @@ export default function Dashboard() {
                                         <a
                                             href="#"
                                             className={`block rounded-xl px-4 py-2 text-sm font-medium text-white hover:bg-white hover:bg-opacity-10 ${currentPage === "Overview" ? "bg-white bg-opacity-10" : ""}`}
-                                            onClick={() => setCurrentPage("Overview")}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage("Overview");
+                                            }}
                                         >
                                             Overview
                                         </a>
@@ -232,7 +273,10 @@ export default function Dashboard() {
                                         <a
                                             href="#"
                                             className={`block rounded-xl px-4 py-2 text-sm font-medium text-white hover:bg-white hover:bg-opacity-10 ${currentPage === "Feedback" ? "bg-white bg-opacity-10" : ""}`}
-                                            onClick={() => setCurrentPage("Feedback")}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage("Feedback");
+                                            }}
                                         >
                                             Feedback
                                         </a>
@@ -242,7 +286,10 @@ export default function Dashboard() {
                                         <a
                                             href="#"
                                             className={`block rounded-xl px-4 py-2 text-sm font-medium text-white hover:bg-white hover:bg-opacity-10 ${currentPage === "API Key" ? "bg-white bg-opacity-10" : ""}`}
-                                            onClick={() => setCurrentPage("API Key")}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage("API Key");
+                                            }}
                                         >
                                             API Key
                                         </a>
@@ -279,7 +326,10 @@ export default function Dashboard() {
                                         <a
                                             href="#"
                                             className={`block rounded-xl px-4 py-2 text-sm font-medium text-white hover:bg-white hover:bg-opacity-10 ${currentPage === "Customisation" ? "bg-white bg-opacity-10" : ""}`}
-                                            onClick={() => setCurrentPage("Customisation")}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage("Customisation");
+                                            }}
                                         >
                                             Customisation
                                         </a>
@@ -289,7 +339,10 @@ export default function Dashboard() {
                                         <a
                                             href="#"
                                             className={`block rounded-xl px-4 py-2 text-sm font-medium text-white hover:bg-white hover:bg-opacity-10 ${currentPage === "Account" ? "bg-white bg-opacity-10" : ""}`}
-                                            onClick={() => setCurrentPage("Account")}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage("Account");
+                                            }}
                                         >
                                             Account
                                         </a>
@@ -555,10 +608,14 @@ export default function Dashboard() {
                                         <div className="flex justify-between items-center py-3">
                                             <div>
 
-                                                <div className="flex items-center bg-purple-400 p-2 cursor-pointer rounded-lg" style={{ display: checkAll ? "flex" : "none" }} onClick={handleDeleteAllFeedback}>
+                                                <div className="flex items-center bg-red-500 hover:bg-red-600 transition duration-300 p-2 cursor-pointer rounded-lg" style={{ display: checkAll ? "flex" : "none" }} onClick={handleDeleteAllFeedback}>
                                                     {/* Delete All Button. Only shown if check all box is checked */}
-                                                    <p className="text-white text-xs">Delete All</p>
+                                                    <p className="text-white text-xs">Resolve All</p>
 
+                                                </div>
+                                                <div className="flex items-center bg-red-500 hover:bg-red-600 transition duration-300 p-2 cursor-pointer rounded-lg" style={{ display: !checkAll && rowsCheck.length > 0 ? "flex" : "none" }} onClick={handleResolveAllSelected}>
+                                                    {/* Resolve All Selected Button. Only shown if one or more rows are selected and not all rows are selected */}
+                                                    <p className="text-white text-xs">Resolve All Selected</p>
                                                 </div>
                                             </div>
 
@@ -680,7 +737,7 @@ export default function Dashboard() {
                                                         <th className="px-4 py-2">
                                                             <div class="inline-flex items-center">
                                                                 <label class="flex items-center cursor-pointer relative">
-                                                                    <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="checkAll" onClick={handleCheckAll} />
+                                                                    <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="checkAll" onClick={handleCheckAll}  checked={checkAll}/>
                                                                     <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
                                                                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
@@ -725,7 +782,9 @@ export default function Dashboard() {
                                                                     {data.category}
                                                                 </div>
                                                             </td>
-                                                            <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">{data.dateSubmitted}</td>
+                                                            <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">
+                                                                {new Date(data.dateSubmitted).toLocaleString('en-GB', dateOptions)}
+                                                            </td>
                                                             <td className="px-4 py-2 whitespace-nowrap text-white">
                                                                 <div className="flex flex-col items-center">
                                                                     <span className="text-xs text-white opacity-60">{data.rating}/10</span>
@@ -791,7 +850,7 @@ export default function Dashboard() {
                                 className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4 even:bg-neutral-700"
                             >
                                 <dt className="font-medium text-white">Date</dt>
-                                <dd className="sm:col-span-2 text-white opacity-90">{selectedFeedback.dateSubmitted}</dd>
+                                <dd className="sm:col-span-2 text-white opacity-90">{new Date(selectedFeedback.dateSubmitted).toLocaleString('en-GB', dateOptions)}</dd>
                             </div>
                             <div
                                 className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4 even:bg-neutral-700"

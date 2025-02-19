@@ -35,7 +35,7 @@ const ApiPrivateRoute = ({ children }) => {
         return <Loading />;
     }
 
-    return userExists ? <FeedbackForm formSettings={formSettings}/> : <NotFound />;
+    return userExists ? <FeedbackForm formSettings={formSettings} apiKey={apiKey}/> : <NotFound />;
 };
 
 

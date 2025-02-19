@@ -50,6 +50,22 @@ export async function addFeedback(userID, feedbackObject) {
   return await response.json();
 }
 
+// Function to add feedback object to feedbackData of a user by API key
+export async function addFeedbackByApiKey(apiKey, feedbackObject) {
+  const response = await fetch(`/users/feedback/${apiKey}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...feedbackObject, message: feedbackObject.message }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to add feedback");
+  }
+  return await response.json();
+}
+
 // Function to delete feedback object from feedbackData of a user by index
 export async function deleteFeedback(userID, index) {
   const response = await fetch(`/users/${userID}/feedback/${index}`, {

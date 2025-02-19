@@ -103,6 +103,34 @@ app.get("/userSettings/:apiKey", async (req, res) => {
     }
 });
 
+// API: Add feedback object to feedbackData of a user by API key
+app.post("/users/feedback/:apiKey", async (req, res) => {
+    try {
+        const apiKey = req.params.apiKey;
+        const { name, email, category, rating, message } = req.body;
+        const dateSubmitted = new Date().toISOString();
+
+        const feedbackObject = { name, email, category, rating, message, dateSubmitted };
+
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
+
+        // Update user's feedbackData array with the new feedbackObject
+        const result = await users.updateOne(
+            { apiKey },
+            { $push: { feedbackData: feedbackObject } }
+        );
+
+        if (result.matchedCount > 0) {
+            res.status(200).json({ message: "Feedback added successfully" });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
 
 //API: Delete feedback object from feedbackData of a user by passing in the index of feedbackID
 app.delete("/users/:userID/feedback/:index", async (req, res) => {
