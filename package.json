@@ -12,6 +12,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "highlight.js": "^11.11.1",
     "mongodb": "^6.13.0"
   }
 }

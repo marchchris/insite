@@ -9,7 +9,7 @@ import Loading from "../components/loadingScreen";
 
 import { getUserById, deleteFeedback, deleteAllFeedback } from "../util/databaseRoutes";
 
-
+import CodeBlock from "../components/codeBlock";
 
 export default function Dashboard() {
     const { user, logOut } = useContext(AuthContext);
@@ -21,6 +21,8 @@ export default function Dashboard() {
 
     const [userData, setUserData] = useState({});
 
+    const [code, setCode] = useState(``);
+
     const dateOptions = {
         year: 'numeric',
         month: 'long', // Use "short" for abbreviations like Feb
@@ -28,7 +30,7 @@ export default function Dashboard() {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true, // 12-hour clock format
-      };
+    };
 
     const [feedbackStats, setFeedbackStats] = useState({
         received: 0,
@@ -55,6 +57,24 @@ export default function Dashboard() {
                 try {
                     const returnedData = await getUserById(user.uid);
                     setUserData(returnedData);
+                    setCode(`<!-- Add this button to your website -->
+<a 
+    href="${window.location.origin}/form/${returnedData.apiKey}"
+    target="_blank"
+    style="
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #9333ea;
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        font-family: sans-serif;
+        transition: background-color 0.3s"
+    onmouseover="this.style.backgroundColor='#7e22ce'"
+    onmouseout="this.style.backgroundColor='#9333ea'"
+>
+    Feedback
+</a>`);
 
 
 
@@ -233,7 +253,7 @@ export default function Dashboard() {
 
                     <ul className="mt-6 space-y-1">
                         <li>
-                            <details className="group [&_summary::-webkit-details-marker]:shown">
+                            <details className="group [&_summary::-webkit-details-marker]:shown" open>
                                 <summary
                                     className="flex cursor-pointer items-center justify-between rounded-xl px-4 py-2 text-white hover:bg-white hover:bg-opacity-10"
                                 >
@@ -299,7 +319,7 @@ export default function Dashboard() {
                         </li>
 
                         <li>
-                            <details className="group [&_summary::-webkit-details-marker]:hidden">
+                            <details className="group [&_summary::-webkit-details-marker]:hidden" open>
                                 <summary
                                     className="flex cursor-pointer items-center justify-between rounded-xl px-4 py-2 text-white hover:bg-white hover:bg-opacity-10"
                                 >
@@ -737,7 +757,7 @@ export default function Dashboard() {
                                                         <th className="px-4 py-2">
                                                             <div class="inline-flex items-center">
                                                                 <label class="flex items-center cursor-pointer relative">
-                                                                    <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="checkAll" onClick={handleCheckAll}  checked={checkAll}/>
+                                                                    <input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id="checkAll" onClick={handleCheckAll} checked={checkAll} />
                                                                     <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
                                                                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
@@ -817,6 +837,41 @@ export default function Dashboard() {
                                 </div>
 
 
+                            </div>
+                        )}
+
+                        {currentPage === "API Key" && (
+                            <div className="flex flex-col w-full h-full bg-[#2a2a2a]">
+                                <div className="flex m-auto">
+                                    <div className="flex flex-col w-full bg-white bg-opacity-5 rounded-xl p-8 justify-center items-center">
+                                        <h2 className="text-white text-xl font-bold">Your Private Key</h2>
+                                        <p className="text-white opacity-60 mt-4 text-sm">Use this API key to integrate the feedback form into your website.</p>
+
+                                        <div className="rounded-lg p-4 font-mono text-sm w-full flex justify-center items-center">
+                                            <pre className="text-white overflow-x-auto w-2/3 bg-neutral-700 p-4 rounded-lg text-center">
+                                                {userData.apiKey}
+                                            </pre>
+                                        </div>
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(userData.apiKey)}
+                                            className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300 flex items-center gap-2"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                            </svg>
+                                            Copy API Key
+                                        </button>
+
+                                        <div className="mt-8 w-full flex flex-col justify-center items-center">
+                                            <h3 className="text-white text-lg font-medium mb-2 text-center">Implementation Example</h3>
+                                            <div className="rounded-lg p-4 font-mono text-sm w-full">
+                                                {/* Code block for example implementation of button that uses api key in link */}
+                                                <CodeBlock language='html' code={code} />;
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>

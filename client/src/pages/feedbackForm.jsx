@@ -1,6 +1,7 @@
 import FeedbackImage from "../imgs/feedbackImage.svg";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { addFeedbackByApiKey } from "../util/databaseRoutes";
+import Cookies from 'js-cookie';
 
 const FeedbackForm = (props) => {
     const [rating, setRating] = useState(5); // Initial rating value
@@ -10,12 +11,23 @@ const FeedbackForm = (props) => {
     const [category, setCategory] = useState(""); // Category state
     const [error, setError] = useState(""); // Error state
     const [success, setSuccess] = useState(""); // Success state
+    const [hasRecentSubmission, setHasRecentSubmission] = useState(false);
 
     const apiKey = props.apiKey;
     const formSettings = props.formSettings;
 
+    useEffect(() => {
+        const submissionCookie = Cookies.get('feedback_submitted');
+        setHasRecentSubmission(!!submissionCookie);
+    }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (hasRecentSubmission) {
+            setError("You recently submitted feedback. Try again later.");
+            return;
+        }
+
         if (message.length < 50) {
             setError("Message must be at least 50 characters long.");
             return;
@@ -25,6 +37,8 @@ const FeedbackForm = (props) => {
 
         try {
             await addFeedbackByApiKey(apiKey, feedbackObject);
+            Cookies.set('feedback_submitted', 'true', { expires: 1/24 }); // 1 hour expiration
+            setHasRecentSubmission(true);
             setSuccess("Feedback submitted successfully!");
             setError("");
             // Reset form fields
@@ -38,6 +52,16 @@ const FeedbackForm = (props) => {
             setSuccess("");
         }
     };
+
+    const submitButton = (
+        <button 
+            type="submit" 
+            disabled={hasRecentSubmission}
+            className={`w-full ${hasRecentSubmission ? 'bg-gray-400' : 'bg-purple-600'} text-white py-3 rounded-md`}
+        >
+            {hasRecentSubmission ? 'Recently Submitted' : 'Submit Feedback'}
+        </button>
+    );
 
     return (
         <>
@@ -119,7 +143,7 @@ const FeedbackForm = (props) => {
                                     </textarea>
                                 </div>
                                 <div className="mt-4">
-                                    <button type="submit" className="w-full bg-purple-600 text-white py-3 rounded-md">Submit Feedback</button>
+                                    {submitButton}
                                 </div>
                             </div>
                         </div>
@@ -206,7 +230,7 @@ const FeedbackForm = (props) => {
                                     </textarea>
                                 </div>
                                 <div className="mt-4">
-                                    <button type="submit" className="w-full bg-purple-600 text-white py-3 rounded-md">Submit Feedback</button>
+                                    {submitButton}
                                 </div>
                             </div>
                         </div>
