@@ -89,3 +89,19 @@ export async function deleteAllFeedback(userID) {
   }
   return await response.json();
 }
+
+// Function to update form settings of a user
+export async function updateFormSettings(userID, formSettings) {
+  const response = await fetch(`/users/${userID}/formSettings`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formSettings),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update form settings");
+  }
+  return await response.json();
+}

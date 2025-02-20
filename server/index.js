@@ -212,6 +212,38 @@ app.post("/users/:userID/feedback", async (req, res) => {
     }
 });
 
+// API: Update form settings by userID
+app.put("/users/:userID/formSettings", async (req, res) => {
+    try {
+        const userID = req.params.userID;
+        const { theme, formTitle, formDescription } = req.body;
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
+
+        const result = await users.updateOne(
+            { userID },
+            { 
+                $set: { 
+                    formSettings: {
+                        theme,
+                        formTitle,
+                        formDescription
+                    }
+                } 
+            }
+        );
+
+        if (result.matchedCount > 0) {
+            res.status(200).json({ message: "Form settings updated successfully" });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 // Start the server
 app.listen(PORT, async () => {
     await connectDB();

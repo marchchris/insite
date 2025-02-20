@@ -5,9 +5,11 @@ import { useNavigate } from "react-router-dom";
 import FeedbackRatioChart from "../components/pieChart";
 import FeedbackAmountChart from "../components/barChart";
 
+import FeedbackImage from "../imgs/feedbackImage.svg";
+
 import Loading from "../components/loadingScreen";
 
-import { getUserById, deleteFeedback, deleteAllFeedback } from "../util/databaseRoutes";
+import { getUserById, deleteFeedback, deleteAllFeedback, updateFormSettings } from "../util/databaseRoutes";
 
 import CodeBlock from "../components/codeBlock";
 
@@ -22,6 +24,15 @@ export default function Dashboard() {
     const [userData, setUserData] = useState({});
 
     const [code, setCode] = useState(``);
+
+    const submitButton = (
+        <button
+            type="button"
+            className={`w-full bg-purple-600 text-white py-3 rounded-md`}
+        >
+            Submit Feedback
+        </button>
+    );
 
     const dateOptions = {
         year: 'numeric',
@@ -49,6 +60,15 @@ export default function Dashboard() {
 
     const [selectedFeedback, setSelectedFeedback] = useState(null);
 
+    const [formSettings, setFormSettings] = useState({
+        theme: "dark",
+        formTitle: "",
+        formDescription: ""
+    });
+    const [originalSettings, setOriginalSettings] = useState(null);
+    const [isEdited, setIsEdited] = useState(false);
+    const [saveStatus, setSaveStatus] = useState({ type: '', message: '' });
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -57,6 +77,8 @@ export default function Dashboard() {
                 try {
                     const returnedData = await getUserById(user.uid);
                     setUserData(returnedData);
+                    setFormSettings(returnedData.formSettings);
+                    setOriginalSettings(returnedData.formSettings);
                     setCode(`<!-- Add this button to your website -->
 <a 
     href="${window.location.origin}/form/${returnedData.apiKey}"
@@ -214,11 +236,16 @@ export default function Dashboard() {
         if (checkAll) {
             // Uncheck all Boxes
             setRowsCheck([]);
+            setCheckAll(false);
         } else {
             // Check all Boxes
-            setRowsCheck(userData.feedbackData.map((_, index) => index));
+            if (userData.feedbackData.length > 0) {
+
+                setRowsCheck(userData.feedbackData.map((_, index) => index));
+                setCheckAll(true);
+            }
         }
-        setCheckAll(!checkAll);
+
     };
 
     // Handle individual row check
@@ -285,7 +312,12 @@ export default function Dashboard() {
                                                 setCurrentPage("Overview");
                                             }}
                                         >
-                                            Overview
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-3">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                                </svg>
+                                                Overview
+                                            </div>
                                         </a>
                                     </li>
 
@@ -298,7 +330,12 @@ export default function Dashboard() {
                                                 setCurrentPage("Feedback");
                                             }}
                                         >
-                                            Feedback
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-3">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5" />
+                                                </svg>
+                                                Feedback
+                                            </div>
                                         </a>
                                     </li>
 
@@ -311,7 +348,12 @@ export default function Dashboard() {
                                                 setCurrentPage("API Key");
                                             }}
                                         >
-                                            API Key
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-3">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
+                                                </svg>
+                                                API Key
+                                            </div>
                                         </a>
                                     </li>
                                 </ul>
@@ -351,7 +393,12 @@ export default function Dashboard() {
                                                 setCurrentPage("Customisation");
                                             }}
                                         >
-                                            Customisation
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-3">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42" />
+                                                </svg>
+                                                Customisation
+                                            </div>
                                         </a>
                                     </li>
 
@@ -364,7 +411,12 @@ export default function Dashboard() {
                                                 setCurrentPage("Account");
                                             }}
                                         >
-                                            Account
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-3">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                                </svg>
+                                                Account
+                                            </div>
                                         </a>
                                     </li>
                                 </ul>
@@ -789,7 +841,7 @@ export default function Dashboard() {
                                                                         <input type="checkbox" className="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-neutral-600 checked:bg-neutral-800 checked:border-neutral-800" id={index} checked={rowsCheck.includes(index)} onChange={() => handleCheckRow(index)} />
                                                                         <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
-                                                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
+                                                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 011.414 0l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                                                                             </svg>
                                                                         </span>
                                                                     </label>
@@ -844,7 +896,7 @@ export default function Dashboard() {
                             <div className="flex flex-col w-full h-full bg-[#2a2a2a]">
                                 <div className="flex m-auto">
                                     <div className="flex flex-col w-full bg-white bg-opacity-5 rounded-xl p-8 justify-center items-center">
-                                        <h2 className="text-white text-xl font-bold">Your Private Key</h2>
+                                        <h2 className="text-white text-xl font-bold">Your Public Key</h2>
                                         <p className="text-white opacity-60 mt-4 text-sm">Use this API key to integrate the feedback form into your website.</p>
 
                                         <div className="rounded-lg p-4 font-mono text-sm w-full flex justify-center items-center">
@@ -870,6 +922,259 @@ export default function Dashboard() {
                                             </div>
 
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {currentPage === "Customisation" && (
+                            <div className="flex flex-col w-full h-full bg-[#2a2a2a]">
+                                <div className="flex w-full h-fit m-auto gap-2 justify-center">
+                                    {/* Settings Panel */}
+                                    <div className="flex flex-col w-1/3 h-fit bg-white bg-opacity-5 rounded-xl p-8">
+                                        <h2 className="text-white text-xl font-bold mb-6">Form Customisation</h2>
+
+                                        {saveStatus.message && (
+                                            <div className={`mb-4 p-4 rounded ${saveStatus.type === 'success' ? 'bg-green-500/20 text-green-200' :
+                                                'bg-red-500/20 text-red-200'
+                                                }`}>
+                                                {saveStatus.message}
+                                            </div>
+                                        )}
+
+                                        <div className="space-y-6">
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-white">Theme</label>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm text-white opacity-70">
+                                                        {formSettings.theme === "dark" ? "Dark Mode" : "Light Mode"}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => {
+                                                            setFormSettings(prev => ({
+                                                                ...prev,
+                                                                theme: prev.theme === "dark" ? "light" : "dark"
+                                                            }));
+                                                            setIsEdited(true);
+                                                        }}
+                                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formSettings.theme === "dark" ? "bg-purple-600" : "bg-neutral-600"
+                                                            }`}
+                                                    >
+                                                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formSettings.theme === "dark" ? "translate-x-6" : "translate-x-1"
+                                                            }`} />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-white mb-2">Form Title</label>
+                                                <input
+                                                    type="text"
+                                                    value={formSettings.formTitle}
+                                                    onChange={(e) => {
+                                                        setFormSettings(prev => ({
+                                                            ...prev,
+                                                            formTitle: e.target.value
+                                                        }));
+                                                        setIsEdited(true);
+                                                    }}
+                                                    className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-purple-500 focus:outline-none"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-white mb-2">Form Description</label>
+                                                <textarea
+                                                    value={formSettings.formDescription}
+                                                    onChange={(e) => {
+                                                        setFormSettings(prev => ({
+                                                            ...prev,
+                                                            formDescription: e.target.value
+                                                        }));
+                                                        setIsEdited(true);
+                                                    }}
+                                                    rows="4"
+                                                    className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-purple-500 focus:outline-none"
+                                                />
+                                            </div>
+
+                                            <div className="flex justify-end">
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            await updateFormSettings(user.uid, formSettings);
+                                                            setOriginalSettings(formSettings);
+                                                            setIsEdited(false);
+                                                            setSaveStatus({
+                                                                type: 'success',
+                                                                message: 'Settings updated successfully'
+                                                            });
+                                                            setTimeout(() => setSaveStatus({ type: '', message: '' }), 3000);
+                                                        } catch (error) {
+                                                            console.error('Failed to update settings:', error);
+                                                            setSaveStatus({
+                                                                type: 'error',
+                                                                message: 'Failed to update settings. Please try again.'
+                                                            });
+                                                        }
+                                                    }}
+                                                    disabled={!isEdited}
+                                                    className={`px-4 py-2 rounded ${isEdited
+                                                        ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
+                                                        : 'bg-neutral-600 text-neutral-400 cursor-not-allowed'
+                                                        } transition-colors`}
+                                                >
+                                                    Save Changes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Preview Panel */}
+                                    <div className="flex flex-col bg-white bg-opacity-5 rounded-xl p-8 w-fit" style={{ transform: 'scale(0.75)', transformOrigin: 'top center' }}>
+                                        <h2 className="text-white text-2xl font-bold mb-6">Preview</h2>
+                                        {formSettings.theme === "dark" ? (
+                                            <form className="bg-white bg-opacity-5 p-8 rounded-lg border text-white flex border border-white border-opacity-15">
+                                                <div className="p-8 rounded-lg text-white">
+                                                    <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
+                                                    <p className="text-center text-white opacity-70">{formSettings.formDescription}</p>
+                                                    <div className="mt-4">
+                                                        <div>
+                                                            <label class="text-white text-sm mb-2 block">Name</label>
+                                                            <input
+                                                                name="name"
+                                                                type="text"
+                                                                required
+                                                                class="w-full bg-white bg-opacity-5 text-neutral-300 text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none"
+                                                                placeholder="Enter name"
+                                                            />
+                                                        </div>
+
+                                                        <div className="mt-2">
+                                                            <label class="text-white text-sm mb-2 block">Email</label>
+                                                            <input
+                                                                name="email"
+                                                                type="text"
+                                                                required
+                                                                class="w-full bg-white bg-opacity-5 text-neutral-300 text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none"
+                                                                placeholder="Enter email"
+                                                            />
+                                                        </div>
+
+                                                        <div className="mt-8">
+                                                            <label class="text-white text-sm block">Category</label>
+                                                            <select
+                                                                name="HeadlineAct"
+                                                                id="HeadlineAct"
+                                                                required
+                                                                className="focus:outline-none mt-1.5 px-4 py-3 w-full bg-white bg-opacity-5 rounded-lg border border-white border-opacity-15 text-white sm:text-sm"
+                                                            >
+                                                                <option value="" className="bg-neutral-600">Please select</option>
+                                                                <option value="Bug" className="bg-neutral-600">Bug</option>
+                                                                <option value="Design" className="bg-neutral-600">Design</option>
+                                                                <option value="Feature" className="bg-neutral-600">Feature</option>
+                                                                <option value="Recommend" className="bg-neutral-600">Recommendation</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div className="mt-4">
+                                                            <label for="rating" class="block mb-2 text-sm text-white">Rating: <span className="font-bold">5/10</span></label>
+                                                            <input
+                                                                id="rating"
+                                                                type="range"
+                                                                min="0"
+                                                                max="10"
+                                                                class="w-full h-2 bg-white bg-opacity-10 rounded-lg appearance-none cursor-pointer accent-purple-300">
+                                                            </input>
+                                                        </div>
+                                                        <div className="mt-4">
+                                                            <label class="text-white text-sm mb-2 block">Message</label>
+                                                            <textarea
+                                                                name="message"
+                                                                rows="4"
+                                                                required
+                                                                class="w-full bg-white bg-opacity-5 text-neutral-300 text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none"
+                                                                placeholder="Enter your message (at least 50 characters)">
+                                                            </textarea>
+                                                        </div>
+                                                        <div className="mt-4">
+                                                            {submitButton}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        ) : (
+                                            <form className="gap-2 shadow bg-gray-100 p-8 rounded-lg border border-gray-300 text-black flex flex-row">
+                                                <div className="p-8 rounded-lg text-black">
+                                                    <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
+                                                    <p className="text-center text-gray-700">{formSettings.formDescription}</p>
+                                                    <div className="mt-4">
+                                                        <div>
+                                                            <label class="text-black text-sm mb-2 block">Name</label>
+                                                            <input
+                                                                name="name"
+                                                                type="text"
+                                                                required
+                                                                class="w-full bg-gray-100 text-black text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none"
+                                                                placeholder="Enter name"
+                                                            />
+                                                        </div>
+
+                                                        <div className="mt-2">
+                                                            <label class="text-black text-sm mb-2 block">Email</label>
+                                                            <input
+                                                                name="email"
+                                                                type="text"
+                                                                required
+                                                                class="w-full bg-gray-100 text-black text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none"
+                                                                placeholder="Enter email"
+                                                            />
+                                                        </div>
+
+                                                        <div className="mt-8">
+                                                            <label class="text-black text-sm block">Category</label>
+                                                            <select
+                                                                name="HeadlineAct"
+                                                                id="HeadlineAct"
+                                                                required
+                                                                className="focus:outline-none mt-1.5 px-4 py-3 w-full bg-gray-100 rounded-lg border border-gray-400 text-black sm:text-sm"
+                                                            >
+                                                                <option value="" className="bg-white">Please select</option>
+                                                                <option value="Bug" className="bg-white">Bug</option>
+                                                                <option value="Design" className="bg-white">Design</option>
+                                                                <option value="Feature" className="bg-white">Feature</option>
+                                                                <option value="Recommend" className="bg-white">Recommendation</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div className="mt-4">
+                                                            <label for="rating" class="block mb-2 text-sm text-black">Rating: <span className="font-bold">5/10</span></label>
+                                                            <input
+                                                                id="rating"
+                                                                type="range"
+                                                                min="0"
+                                                                max="10"
+                                                                value={5}
+                                                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-purple-400">
+                                                            </input>
+                                                        </div>
+                                                        <div className="mt-4">
+                                                            <label class="text-black text-sm mb-2 block">Message</label>
+                                                            <textarea
+                                                                name="message"
+                                                                rows="4"
+                                                                required
+                                                                class="w-full bg-gray-100 text-black text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none"
+                                                                placeholder="Enter your message (at least 50 characters)">
+                                                            </textarea>
+                                                        </div>
+                                                        <div className="mt-4">
+                                                            {submitButton}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        )}
                                     </div>
                                 </div>
                             </div>
