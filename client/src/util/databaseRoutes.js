@@ -105,3 +105,15 @@ export async function updateFormSettings(userID, formSettings) {
   }
   return await response.json();
 }
+
+// Function to delete user from database
+export async function deleteUserAccount(userID) {
+  const response = await fetch(`/users/${userID}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete user");
+  }
+  return await response.json();
+}

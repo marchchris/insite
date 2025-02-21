@@ -14,5 +14,8 @@
     "express": "^4.21.2",
     "highlight.js": "^11.11.1",
     "mongodb": "^6.13.0"
+  },
+  "engines": {
+    "node" : "20.15.0"
   }
 }

@@ -9,7 +9,7 @@ import FeedbackImage from "../imgs/feedbackImage.svg";
 
 import Loading from "../components/loadingScreen";
 
-import { getUserById, deleteFeedback, deleteAllFeedback, updateFormSettings } from "../util/databaseRoutes";
+import { getUserById, deleteFeedback, deleteAllFeedback, updateFormSettings, deleteUserAccount } from "../util/databaseRoutes";
 
 import CodeBlock from "../components/codeBlock";
 
@@ -24,6 +24,8 @@ export default function Dashboard() {
     const [userData, setUserData] = useState({});
 
     const [code, setCode] = useState(``);
+
+    const [rating, setRating] = useState(5);
 
     const submitButton = (
         <button
@@ -68,6 +70,9 @@ export default function Dashboard() {
     const [originalSettings, setOriginalSettings] = useState(null);
     const [isEdited, setIsEdited] = useState(false);
     const [saveStatus, setSaveStatus] = useState({ type: '', message: '' });
+
+    const [deleteAccountEmail, setDeleteAccountEmail] = useState("");
+    const [deleteError, setDeleteError] = useState("");
 
     const navigate = useNavigate();
 
@@ -324,7 +329,7 @@ export default function Dashboard() {
                                     <li>
                                         <a
                                             href="#"
-                                            className={`block rounded-xl px-4 py-2 text-sm font-medium text-white hover:bg-white hover:bg-opacity-10 transition duration-200${currentPage === "Feedback" ? "bg-white bg-opacity-10" : ""}`}
+                                            className={`block rounded-xl px-4 py-2 text-sm font-medium text-white hover:bg-white hover:bg-opacity-10 transition duration-200 ${currentPage === "Feedback" ? "bg-white bg-opacity-10" : ""}`}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 setCurrentPage("Feedback");
@@ -434,14 +439,21 @@ export default function Dashboard() {
                         <p className="mx-2">{currentPage}</p>
                     </div>
 
-                    <a href="#" className="text-white text-sm font-medium" onClick={() => {
-                        logOut()
-                            .then(() => {
-                                console.log("User logged out successfully");
-                                navigate("/login");
-                            })
-                            .catch((error) => console.error(error));
-                    }}>Logout</a>
+                    <div className="flex items-center gap-1 text-white">
+                        <a href="#" className="text-white text-sm font-medium" onClick={() => {
+                            logOut()
+                                .then(() => {
+                                    console.log("User logged out successfully");
+                                    navigate("/login");
+                                })
+                                .catch((error) => console.error(error));
+                        }}>Logout</a>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                            <path fill-rule="evenodd" d="M2 10a.75.75 0 0 1 .75-.75h12.59l-2.1-1.95a.75.75 0 1 1 1.02-1.1l3.5 3.25a.75.75 0 0 1 0 1.1l-3.5 3.25a.75.75 0 1 1-1.02-1.1l2.1-1.95H2.75A.75.75 0 0 1 2 10Z" clip-rule="evenodd" />
+                        </svg>
+
+
+                    </div>
                 </div>
                 {/* Main Area */}
                 <div className="flex-1 overflow-y-auto bg-[#2a2a2a] p-8">
@@ -909,28 +921,49 @@ export default function Dashboard() {
                                     <h2 className="text-white text-xl font-bold">Your Public Key</h2>
                                     <p className="text-white opacity-60 mt-4 text-sm">Use this API key to integrate the feedback form into your website.</p>
 
-                                    <div className="rounded-lg p-4 font-mono text-sm w-full flex justify-center items-center">
-                                        <pre className="text-white overflow-x-auto w-2/3 bg-neutral-700 p-4 rounded-lg text-center">
-                                            {userData.apiKey}
-                                        </pre>
+                                    <div className="inline flex items-center gap-1 w-full">
+                                        <div className="rounded-lg p-4 font-mono text-sm w-full flex justify-center items-center">
+                                            <pre className="text-white overflow-x-auto w-full bg-neutral-700 p-4 rounded-lg text-center">
+                                                {userData.apiKey}
+                                            </pre>
+                                        </div>
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(userData.apiKey)}
+                                            className="px-4 w-1/2 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300 flex items-center gap-2"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                            </svg>
+                                            Copy API Key
+                                        </button>
                                     </div>
-                                    <button
-                                        onClick={() => navigator.clipboard.writeText(userData.apiKey)}
-                                        className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300 flex items-center gap-2"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                                        </svg>
-                                        Copy API Key
-                                    </button>
 
-                                    <div className="mt-8 w-full flex flex-col justify-center items-center">
+                                    <div className="mt-4 w-full flex flex-col justify-center items-center">
                                         <h3 className="text-white text-lg font-medium mb-2 text-center">Implementation Example</h3>
                                         <div className="rounded-lg p-4 font-mono text-sm w-full">
                                             {/* Code block for example implementation of button that uses api key in link */}
                                             <CodeBlock language='html' code={code} />;
                                         </div>
 
+                                    </div>
+
+                                    <div className="w-full flex flex-col justify-center items-center">
+                                        <h3 className="text-white text-lg font-medium mb-2 text-center">See Your Form Live</h3>
+                                        <p className="text-white opacity-60 text-sm mb-4 font-medium">
+                                            Your form is now live at: <a href={`${window.location.origin}/form/${userData.apiKey}`} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 transition-colors">
+                                                {window.location.origin}/form/{userData.apiKey}
+                                            </a>
+                                        </p>
+                                        {/* Button that onClick goes to form */}
+                                        <button
+                                            onClick={() => window.open(`${window.location.origin}/form/${userData.apiKey}`, '_blank')}
+                                            className="px-4 w-1/2 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300 flex items-center justify-center gap-2"
+                                        >
+                                            Go To Form
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1088,12 +1121,14 @@ export default function Dashboard() {
                                                     </div>
 
                                                     <div className="mt-4">
-                                                        <label for="rating" class="block mb-2 text-sm text-white">Rating: <span className="font-bold">5/10</span></label>
+                                                        <label for="rating" class="block mb-2 text-sm text-white">Rating: <span className="font-bold">{rating}/10</span></label>
                                                         <input
                                                             id="rating"
                                                             type="range"
                                                             min="0"
                                                             max="10"
+                                                            value={rating}
+                                                            onChange={(e) => setRating(e.target.value)}
                                                             class="w-full h-2 bg-white bg-opacity-10 rounded-lg appearance-none cursor-pointer accent-purple-300">
                                                         </input>
                                                     </div>
@@ -1158,13 +1193,14 @@ export default function Dashboard() {
                                                     </div>
 
                                                     <div className="mt-4">
-                                                        <label for="rating" class="block mb-2 text-sm text-black">Rating: <span className="font-bold">5/10</span></label>
+                                                        <label for="rating" class="block mb-2 text-sm text-black">Rating: <span className="font-bold">{rating}/10</span></label>
                                                         <input
                                                             id="rating"
                                                             type="range"
                                                             min="0"
                                                             max="10"
-                                                            value={5}
+                                                            value={rating}
+                                                            onChange={(e) => setRating(e.target.value)}
                                                             class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-purple-400">
                                                         </input>
                                                     </div>
@@ -1185,6 +1221,105 @@ export default function Dashboard() {
                                             </div>
                                         </form>
                                     )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {currentPage === "Account" && (
+                        <div className="flex flex-col w-full h-full bg-[#2a2a2a]">
+                            <div className="flex w-2/5 m-auto">
+                                <div className="flex flex-col w-full bg-white bg-opacity-5 rounded-xl p-8">
+                                    <h2 className="text-white text-xl font-bold mb-6">Account Information</h2>
+
+                                    <div className="space-y-4">
+                                        <div className="flex flex-col space-y-1">
+                                            <label className="text-white opacity-60">Email</label>
+                                            <p className="text-white">{user.email}</p>
+                                        </div>
+
+                                        <div className="flex flex-col space-y-1">
+                                            <label className="text-white opacity-60">Account Created</label>
+                                            <p className="text-white">
+                                                {new Date(user.metadata.creationTime).toLocaleString('en-GB', dateOptions)}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex flex-col space-y-1">
+                                            <label className="text-white opacity-60">Last Sign In</label>
+                                            <p className="text-white">
+                                                {new Date(user.metadata.lastSignInTime).toLocaleString('en-GB', dateOptions)}
+                                            </p>
+                                        </div>
+
+                                        <div className="mt-8 pt-8 border-t border-white border-opacity-15">
+                                            <h3 className="text-red-500 text-lg font-semibold mb-4">Danger Zone</h3>
+
+                                            <details className="group">
+                                                <summary className="flex cursor-pointer items-center justify-between rounded-lg bg-red-500 bg-opacity-10 p-4 text-red-500">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-medium">Delete Account</span>
+                                                    </div>
+
+                                                    <span className="shrink-0 transition duration-300 group-open:-rotate-180">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </span>
+                                                </summary>
+
+                                                <div className="mt-4 px-4 pb-4">
+                                                    <p className="text-sm text-white opacity-60 mb-4">
+                                                        This action cannot be undone. This will permanently delete your account and remove all your data from our servers.
+                                                    </p>
+
+                                                    <div className="space-y-4">
+                                                        <input
+                                                            type="email"
+                                                            placeholder="Type your email to confirm"
+                                                            className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-red-500 focus:outline-none"
+                                                            value={deleteAccountEmail}
+                                                            onChange={(e) => setDeleteAccountEmail(e.target.value)}
+                                                        />
+
+                                                        {deleteError && (
+                                                            <p className="text-sm text-red-500">{deleteError}</p>
+                                                        )}
+
+                                                        <button
+                                                            onClick={async () => {
+                                                                if (deleteAccountEmail === user.email) {
+                                                                    if (window.confirm("Are you absolutely sure you want to delete your account? This action cannot be undone.")) {
+                                                                        try {
+                                                                            await deleteUserAccount(user.uid); // Delete from database first
+                                                                            await user.delete(); // Delete from Firebase Auth
+                                                                            await logOut(); // Log out the user
+                                                                            window.location.reload(false); // Reload the page
+                                                                        } catch (error) {
+                                                                            // If the error is about requiring recent login
+                                                                            if (error.code === 'auth/requires-recent-login') {
+                                                                                alert("For security purposes, please log out and log back in before deleting your account.");
+                                                                                await logOut();
+                                                                                window.location.reload(false); // Reload the page
+                                                                            } else {
+                                                                                setDeleteError("Failed to delete account. Please try again.");
+                                                                                console.error("Account deletion error:", error);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                } else {
+                                                                    setDeleteError("Email doesn't match");
+                                                                }
+                                                            }}
+                                                            className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300"
+                                                        >
+                                                            Delete Account
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </details>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -56,7 +56,7 @@ const VerifyEmail = () => {
             <div className="h-screen w-screen bg-[#2a2a2a] flex items-center justify-center">
                 <div className="bg-white bg-opacity-5 p-8 rounded-lg border border-white border-opacity-10 text-white w-1/4">
                     <h1 className="text-2xl font-bold text-center">Verify Email</h1>
-                    <p className="text-center text-white opacity-70">A verification email has been sent to your email address. Please verify your email address to continue.</p>
+                    <p className="text-center text-white opacity-70">A verification email has been sent to your email address. Please verify your email address to continue. If you don’t see the email, please check your junk or spam folder.</p>
                     <button 
                         onClick={handleResendEmail} 
                         className="mt-4 w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded transition duration-300"

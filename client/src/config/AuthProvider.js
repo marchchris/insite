@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
@@ -35,6 +37,11 @@ const AuthProvider = ({ children }) => {
     return sendPasswordResetEmail(auth, email);
   };
 
+  const reauthenticateUser = (email, password) => {
+    const credential = EmailAuthProvider.credential(email, password);
+    return reauthenticateWithCredential(auth.currentUser, credential);
+  };
+
   const cancelLoading = () => {
     setLoading(false);
     return null;
@@ -59,6 +66,7 @@ const AuthProvider = ({ children }) => {
     loading,
     cancelLoading,
     resetPassword,
+    reauthenticateUser,
   };
 
   return <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>;

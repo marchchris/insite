@@ -244,6 +244,26 @@ app.put("/users/:userID/formSettings", async (req, res) => {
     }
 });
 
+// API: Delete user by userID
+app.delete("/users/:userID", async (req, res) => {
+    try {
+        const userID = req.params.userID;
+        const database = client.db(dbName);
+        const users = database.collection(collectionName);
+
+        const result = await users.deleteOne({ userID });
+
+        if (result.deletedCount > 0) {
+            res.status(200).json({ message: "User deleted successfully" });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 // Start the server
 app.listen(PORT, async () => {
     await connectDB();
