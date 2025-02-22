@@ -11,6 +11,8 @@ import NotFound from "./pages/404";
 
 import ApiPrivateRoute from "./util/apiPrivateRoute";
 
+import HomePage from "./pages/homePage.jsx/home";
+
 
 export default function App() {
   return (
@@ -18,7 +20,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/">
-            <Route index element={<h1>Home</h1>} />
+            <Route index element={<HomePage/>} />
             <Route path="dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />

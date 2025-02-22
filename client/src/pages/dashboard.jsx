@@ -94,11 +94,7 @@ export default function Dashboard() {
         background-color: #9333ea;
         color: white;
         border-radius: 50px;
-        text-decoration: none;
-        font-family: sans-serif;
-        transition: background-color 0.3s"
-    onmouseover="this.style.backgroundColor='#7e22ce'"
-    onmouseout="this.style.backgroundColor='#9333ea'"
+        text-decoration: none;"
 >
     Feedback
 </a>`);
@@ -149,7 +145,7 @@ export default function Dashboard() {
     const updateFeedbackStats = (feedbackData) => {
         const now = new Date();
         const last7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)));
-        const previous7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 7)) && new Date(fb["Date Submitted"]) < new Date(now.setDate(now.getDate() + 7)));
+        const previous7Days = feedbackData.filter(fb => new Date(fb["dateSubmitted"]) >= new Date(now.setDate(now.getDate() - 14)) && new Date(fb["Date Submitted"]) < new Date(now.setDate(now.getDate() - 7)));
 
         const received = last7Days.length;
         const positive = last7Days.filter(fb => fb.rating > 7).length;
@@ -231,10 +227,13 @@ export default function Dashboard() {
         setSelectedFeedback(null);
     };
 
-    const filteredFeedbackData = userData.feedbackData ? userData.feedbackData.filter(data =>
-        (categoryFilter.length === 0 || categoryFilter.includes(data.category)) &&
-        (ratingFilter.length === 0 || ratingFilter.includes(data.rating <= 4 ? "Negative" : data.rating <= 7 ? "Neutral" : "Positive"))
-    ) : [];
+    const filteredFeedbackData = userData.feedbackData ? userData.feedbackData
+        .filter(data =>
+            (categoryFilter.length === 0 || categoryFilter.includes(data.category)) &&
+            (ratingFilter.length === 0 || ratingFilter.includes(data.rating <= 4 ? "Negative" : data.rating <= 7 ? "Neutral" : "Positive"))
+        )
+        .sort((a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)) // Sort by date, newest first
+    : [];
 
     // Handle check All
     const handleCheckAll = () => {
@@ -472,46 +471,10 @@ export default function Dashboard() {
                                         <p className="text-2xl font-medium text-white">{feedbackStats.received}</p>
                                     </div>
 
-                                    {feedbackStats.receivedChange >= 0 ? (
-                                        <div className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                                                />
-                                            </svg>
+  
 
-                                            <span className="text-xs font-medium"> {feedbackStats.receivedChange.toFixed(2)}% </span>
 
-                                        </div>
-                                    ) : (
-                                        <div className="inline-flex gap-2 rounded-sm p-1 bg-red-500 text-red-50 bg-opacity-75">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-                                                />
-                                            </svg>
-
-                                            <span className="text-xs font-medium"> {feedbackStats.receivedChange.toFixed(2)}% </span>
-                                        </div>
-                                    )}
+                                    
                                 </article>
 
                                 <article
@@ -524,45 +487,8 @@ export default function Dashboard() {
                                         <p className="text-2xl font-medium text-white">{feedbackStats.positive}</p>
                                     </div>
 
-                                    {feedbackStats.positiveChange >= 0 ? (
-                                        <div className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                                                />
-                                            </svg>
 
-                                            <span className="text-xs font-medium"> {feedbackStats.positiveChange.toFixed(2)}% </span>
-                                        </div>
-                                    ) : (
-                                        <div className="inline-flex gap-2 rounded-sm p-1 bg-red-500 text-red-50 bg-opacity-75">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-                                                />
-                                            </svg>
-
-                                            <span className="text-xs font-medium"> {feedbackStats.positiveChange.toFixed(2)}% </span>
-                                        </div>
-                                    )}
+                                    
                                 </article>
 
                                 <article
@@ -575,45 +501,8 @@ export default function Dashboard() {
                                         <p className="text-2xl font-medium text-white">{feedbackStats.negative}</p>
                                     </div>
 
-                                    {feedbackStats.negativeChange >= 0 ? (
-                                        <div className="inline-flex gap-2 rounded-sm p-1 bg-green-500 text-green-50 bg-opacity-75">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                                                />
-                                            </svg>
 
-                                            <span className="text-xs font-medium"> {feedbackStats.negativeChange.toFixed(2)}% </span>
-                                        </div>
-                                    ) : (
-                                        <div className="inline-flex gap-2 rounded-sm p-1 bg-red-500 text-red-50 bg-opacity-75">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="size-4"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-                                                />
-                                            </svg>
-
-                                            <span className="text-xs font-medium"> {feedbackStats.negativeChange.toFixed(2)}% </span>
-                                        </div>
-                                    )}
+                                    
                                 </article>
 
                                 <article

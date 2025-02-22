@@ -140,10 +140,13 @@ app.delete("/users/:userID/feedback/:index", async (req, res) => {
         const database = client.db(dbName);
         const users = database.collection(collectionName);
 
-        // Remove feedback object from feedbackData array by index
+        // Remove feedback object from feedbackData array by index and increment resolvedAmount
         const result = await users.updateOne(
             { userID },
-            { $unset: { [`feedbackData.${index}`]: 1 } }
+            { 
+                $unset: { [`feedbackData.${index}`]: 1 },
+                $inc: { resolvedAmount: 1 }
+            }
         );
 
         if (result.matchedCount > 0) {
@@ -169,14 +172,24 @@ app.delete("/users/:userID/feedback", async (req, res) => {
         const database = client.db(dbName);
         const users = database.collection(collectionName);
 
-        // Remove all feedbackData for the user
+        // First get the current feedback count
+        const user = await users.findOne({ userID });
+        const feedbackCount = user?.feedbackData?.length || 0;
+
+        // Remove all feedbackData and update resolvedAmount
         const result = await users.updateOne(
             { userID },
-            { $set: { feedbackData: [] } }
+            { 
+                $set: { feedbackData: [] },
+                $inc: { resolvedAmount: feedbackCount }
+            }
         );
 
         if (result.matchedCount > 0) {
-            res.status(200).json({ message: "All feedback deleted successfully" });
+            res.status(200).json({ 
+                message: "All feedback deleted successfully",
+                resolvedCount: feedbackCount
+            });
         } else {
             res.status(404).json({ message: "User not found" });
         }
