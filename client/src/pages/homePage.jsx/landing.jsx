@@ -38,7 +38,7 @@ export default function Landing(props) {
                                 logOut()
                                     .then(() => {
                                         console.log("User logged out successfully");
-                                        navigate("/login");
+                                        navigate("/");
                                     })
                                     .catch((error) => console.error(error));
                             }}>Log out</a>
