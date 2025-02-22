@@ -902,6 +902,7 @@ export default function Dashboard() {
                                             <label className="block text-white mb-2">Form Title</label>
                                             <input
                                                 type="text"
+                                                maxLength = "64"
                                                 value={formSettings.formTitle}
                                                 onChange={(e) => {
                                                     setFormSettings(prev => ({
@@ -918,6 +919,7 @@ export default function Dashboard() {
                                             <label className="block text-white mb-2">Form Description</label>
                                             <textarea
                                                 value={formSettings.formDescription}
+                                                maxLength="200"
                                                 onChange={(e) => {
                                                     setFormSettings(prev => ({
                                                         ...prev,
@@ -969,7 +971,7 @@ export default function Dashboard() {
                                         <form className="bg-white bg-opacity-5 p-8 rounded-lg border text-white flex border border-white border-opacity-15">
                                             <div className="p-8 rounded-lg text-white">
                                                 <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
-                                                <p className="text-center text-white opacity-70">{formSettings.formDescription}</p>
+                                                <p className="text-center text-white opacity-70 max-w-md mx-auto">{formSettings.formDescription}</p>
                                                 <div className="mt-4">
                                                     <div>
                                                         <label class="text-white text-sm mb-2 block">Name</label>
@@ -1041,7 +1043,7 @@ export default function Dashboard() {
                                         <form className="gap-2 shadow bg-gray-100 p-8 rounded-lg border border-gray-300 text-black flex flex-row">
                                             <div className="p-8 rounded-lg text-black">
                                                 <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
-                                                <p className="text-center text-gray-700">{formSettings.formDescription}</p>
+                                                <p className="text-center text-gray-700 max-w-md mx-auto">{formSettings.formDescription}</p>
                                                 <div className="mt-4">
                                                     <div>
                                                         <label class="text-black text-sm mb-2 block">Name</label>

@@ -70,7 +70,7 @@ const FeedbackForm = (props) => {
                     <form onSubmit={handleSubmit} className="gap-2 bg-white bg-opacity-5 p-8 rounded-lg border border-white border-opacity-10 text-white flex flex-row border border-white border-opacity-15">
                         <div className="p-8 rounded-lg text-white w-1/2">
                             <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
-                            <p className="text-center text-white opacity-70">{formSettings.formDescription}</p>
+                            <p className="text-center text-white opacity-70 max-w-md mx-auto">{formSettings.formDescription}</p>
                             <div className="mt-4">
                                 {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                                 {success && <p className="text-green-500 text-sm text-center">{success}</p>}
@@ -157,7 +157,7 @@ const FeedbackForm = (props) => {
                     <form onSubmit={handleSubmit} className="gap-2 shadow bg-gray-100 p-8 rounded-lg border border-gray-300 text-black flex flex-row">
                         <div className="p-8 rounded-lg text-black w-1/2">
                             <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
-                            <p className="text-center text-gray-700">{formSettings.formDescription}</p>
+                            <p className="text-center text-gray-700 max-w-md mx-auto">{formSettings.formDescription}</p>
                             <div className="mt-4">
                                 {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                                 {success && <p className="text-green-500 text-sm text-center">{success}</p>}
