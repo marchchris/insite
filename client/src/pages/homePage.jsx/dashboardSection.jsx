@@ -4,7 +4,7 @@ import FormImage from "./images/formImage.PNG";
 import CodeBlock from "../../components/codeBlock";
 
 const code = `<a 
-    href="${window.location.origin}/form/lol"
+    href="${window.location.origin}/form/{apiKey}"
     target="_blank"
     style="
         display: inline-block;
@@ -79,10 +79,10 @@ export default function DashboardSection() {
                 {/* Content Text */}
                 <div className="flex-1">
                     <h1 className="text-4xl font-medium mb-2"><span className="text-purple-300">Easy</span> Integration</h1>
-                    <h2 className="text-xl opacity-70">Built for website owners and developers, InSite makes collecting, organizing and acting on feedback effortless.</h2>
+                    <h2 className="text-xl opacity-70">Built for website owners and developers, InSite makes collecting, organizing, and acting on feedback effortless, all with just a single link.</h2>
                     <div className="w-5/6">
                         <p className="text-lg mt-8 font-medium"> Straight Forward. <span className="opacity-70 font-normal">Add a feedback button to your website with a single line of code. No complex setup required.</span></p>
-                        <p className="text-lg mt-8 font-medium"> Dynamic Feedback Links. <span className="opacity-70 font-normal">Each website gets a unique link where users can leave feedback, tailored to your brand.</span></p>
+                        <p className="text-lg mt-4 font-medium"> Dynamic Feedback Links. <span className="opacity-70 font-normal">Each website gets a unique link where users can leave feedback, tailored to your brand.</span></p>
                         <p className="text-lg mt-4 font-medium"> Centralized Dashboard. <span className="opacity-70 font-normal">Access all your feedback in one place. Filter, sort and prioritize comments with ease.</span></p>
                     </div>
                 </div>

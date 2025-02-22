@@ -12,14 +12,14 @@ export default function Landing() {
                     </div>
                     {/* Center Links */}
                     <div className="justify-center items-center flex space-x-10">
-                        <a className="opacity-60 hover:opacity-100 transition duration 300">Features</a>
-                        <a className="opacity-60 hover:opacity-100 transition duration 300">Getting Started</a>
-                        <a className="opacity-60 hover:opacity-100 transition duration 300">Dashboard</a>
+                        <a className="opacity-60 hover:opacity-100 transition duration 300" href = "#dashboardSection">Features</a>
+                        <a className="opacity-60 hover:opacity-100 transition duration 300" href = "#gettingStarted">Getting Started</a>
+                        <a className="opacity-60 hover:opacity-100 transition duration 300" href = "/dashboard">Dashboard</a>
                     </div>
                     {/* Login and Sign up buttons */}
                     <div>
-                        <a className="opacity-60 hover:opacity-100 transition duration 300">Log in</a>
-                        <a className="transition duration 300 py-2 px-4 mx-4 bg-purple-400 rounded-lg text-black hover:bg-purple-500 text-[#fcfcff]">Sign up</a>
+                        <a className="opacity-60 hover:opacity-100 transition duration 300" href = "/login">Log in</a>
+                        <a className="transition duration 300 py-2 px-4 mx-4 bg-purple-400 rounded-lg text-white hover:bg-purple-500 text-[#fcfcff]" href="/register" >Sign up</a>
                     </div>
                 </div>
 
@@ -34,8 +34,8 @@ export default function Landing() {
                             <h1 className="text-6xl font-medium text-white"><span className="text-purple-300">Powerful</span> Insights</h1>
                             <p className="mt-4 w-2/3 opacity-70">Collect, manage, and act on user feedback. Empower your website or service with a simple, elegant feedback system designed to help you grow.</p>
                             <div className="mt-4 flex space-x-6 items-center cursor-pointer">
-                                <button className="transition duration-300 py-2 px-4 bg-purple-400 rounded-lg text-black hover:bg-purple-500 text-[#fcfcff] font-medium">Get Started</button>
-                                <a className="opacity-70 font-medium hover:opacity-100 transition duration-300 flex items-center">
+                                <button className="transition duration-300 py-2 px-4 bg-purple-400 rounded-lg text-white hover:bg-purple-500 text-[#fcfcff] font-medium">Get Started</button>
+                                <a className="opacity-70 font-medium hover:opacity-100 transition duration-300 flex items-center" href = "/dashboard">
                                     Go To Dashboard
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5 ml-1">
                                         <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
