@@ -786,7 +786,7 @@ export default function Dashboard() {
                                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                                                         </svg>
                                                                     </summary>
-                                                                    <ul className="fixed mt-2 w-32 rounded-md shadow-lg z-50 bg-neutral-600 border border-neutral-500">
+                                                                    <ul className="mt-2 w-32 rounded-md shadow-lg z-50 bg-neutral-600 border border-neutral-500 absolute right-0">
                                                                         <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-300" onClick={(event) => handleRowTabViewClick(data, event)}>View</li>
                                                                         <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-30" onClick={(event) => handleRowTabDeleteClick(data, event)}>Resolve</li>
                                                                     </ul>
