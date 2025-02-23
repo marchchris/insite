@@ -1,4 +1,6 @@
 const express = require("express");
+const path = require('path');
+
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
 
@@ -279,6 +281,10 @@ app.delete("/users/:userID", async (req, res) => {
 
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+});
+
+app.use("/", (req, res) => {
+    res.send("Server is running.");
 });
 
 // Start the server
