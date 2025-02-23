@@ -13,7 +13,7 @@ import { AuthContext } from "../../config/AuthProvider";
 
 
 const HomePage = () => {
-    const { logOut, loading, user, cancelLoading } = useContext(AuthContext);
+    const { loading, user } = useContext(AuthContext);
 
     if (loading) {
         return (

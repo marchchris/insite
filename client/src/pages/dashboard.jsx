@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import FeedbackRatioChart from "../components/pieChart";
 import FeedbackAmountChart from "../components/barChart";
 
-import FeedbackImage from "../imgs/feedbackImage.svg";
-
 import Loading from "../components/loadingScreen";
 
 import { getUserById, deleteFeedback, deleteAllFeedback, updateFormSettings, deleteUserAccount } from "../util/databaseRoutes";

@@ -85,11 +85,11 @@ app.get("/users/:userID", async (req, res) => {
 // API: Retrieve user form settings by API key
 app.get("/userSettings/:apiKey", async (req, res) => {
     try {
-        
+
         const apiKey = req.params.apiKey;
         const database = client.db(dbName);
         const users = database.collection(collectionName);
-        
+
         const user = await users.findOne({ apiKey });
 
         if (user) {
@@ -143,7 +143,7 @@ app.delete("/users/:userID/feedback/:index", async (req, res) => {
         // Remove feedback object from feedbackData array by index and increment resolvedAmount
         const result = await users.updateOne(
             { userID },
-            { 
+            {
                 $unset: { [`feedbackData.${index}`]: 1 },
                 $inc: { resolvedAmount: 1 }
             }
@@ -179,14 +179,14 @@ app.delete("/users/:userID/feedback", async (req, res) => {
         // Remove all feedbackData and update resolvedAmount
         const result = await users.updateOne(
             { userID },
-            { 
+            {
                 $set: { feedbackData: [] },
                 $inc: { resolvedAmount: feedbackCount }
             }
         );
 
         if (result.matchedCount > 0) {
-            res.status(200).json({ 
+            res.status(200).json({
                 message: "All feedback deleted successfully",
                 resolvedCount: feedbackCount
             });
@@ -235,14 +235,14 @@ app.put("/users/:userID/formSettings", async (req, res) => {
 
         const result = await users.updateOne(
             { userID },
-            { 
-                $set: { 
+            {
+                $set: {
                     formSettings: {
                         theme,
                         formTitle,
                         formDescription
                     }
-                } 
+                }
             }
         );
 
@@ -275,6 +275,10 @@ app.delete("/users/:userID", async (req, res) => {
         console.error(err);
         res.status(500).json({ message: "Internal server error" });
     }
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 });
 
 // Start the server
