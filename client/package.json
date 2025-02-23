@@ -10,7 +10,7 @@
     "@types/js-cookie": "^3.0.6",
     "chart.js": "^4.4.7",
     "firebase": "^11.3.1",
-    "highlightjs": "^9.16.2",
+    "highlight.js": "^11.11.1",
     "js-cookie": "^3.0.5",
     "motion": "^12.4.7",
     "react": "^19.0.0",
