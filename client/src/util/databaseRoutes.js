@@ -1,7 +1,9 @@
+const API_BASE_URL = 'https://insite-server.vercel.app';
+
 // Function to retrieve user by userID
 export async function getUserById(userID) {
   console.log("Fetching user data for ", userID);
-  const response = await fetch(`/users/${userID}`);
+  const response = await fetch(`${API_BASE_URL}/users/${userID}`);
   if (!response.ok) {
     throw new Error("User not found");
   }
@@ -11,7 +13,7 @@ export async function getUserById(userID) {
 // Function to retrieve user by API key
 export async function getUserSettingsByApiKey(apiKey) {
   console.log("fetching key ", apiKey);
-  const response = await fetch(`/userSettings/${apiKey}`);
+  const response = await fetch(`${API_BASE_URL}/userSettings/${apiKey}`);
   if (!response.ok) {
     throw new Error("User not found");
   }
@@ -20,7 +22,7 @@ export async function getUserSettingsByApiKey(apiKey) {
 
 // Function to create a new user in the database
 export async function createUserInDatabase(userData) {
-  const response = await fetch(`/users`, {
+  const response = await fetch(`${API_BASE_URL}/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -36,7 +38,7 @@ export async function createUserInDatabase(userData) {
 
 // Function to add feedback object to feedbackData of a user
 export async function addFeedback(userID, feedbackObject) {
-  const response = await fetch(`/users/${userID}/feedback`, {
+  const response = await fetch(`${API_BASE_URL}/users/${userID}/feedback`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -52,7 +54,7 @@ export async function addFeedback(userID, feedbackObject) {
 
 // Function to add feedback object to feedbackData of a user by API key
 export async function addFeedbackByApiKey(apiKey, feedbackObject) {
-  const response = await fetch(`/users/feedback/${apiKey}`, {
+  const response = await fetch(`${API_BASE_URL}/users/feedback/${apiKey}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -68,7 +70,7 @@ export async function addFeedbackByApiKey(apiKey, feedbackObject) {
 
 // Function to delete feedback object from feedbackData of a user by index
 export async function deleteFeedback(userID, index) {
-  const response = await fetch(`/users/${userID}/feedback/${index}`, {
+  const response = await fetch(`${API_BASE_URL}/users/${userID}/feedback/${index}`, {
     method: "DELETE",
   });
 
@@ -80,7 +82,7 @@ export async function deleteFeedback(userID, index) {
 
 // Function to delete all feedbackData of a user
 export async function deleteAllFeedback(userID) {
-  const response = await fetch(`/users/${userID}/feedback`, {
+  const response = await fetch(`${API_BASE_URL}/users/${userID}/feedback`, {
     method: "DELETE",
   });
 
@@ -92,7 +94,7 @@ export async function deleteAllFeedback(userID) {
 
 // Function to update form settings of a user
 export async function updateFormSettings(userID, formSettings) {
-  const response = await fetch(`/users/${userID}/formSettings`, {
+  const response = await fetch(`${API_BASE_URL}/users/${userID}/formSettings`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -108,7 +110,7 @@ export async function updateFormSettings(userID, formSettings) {
 
 // Function to delete user from database
 export async function deleteUserAccount(userID) {
-  const response = await fetch(`/users/${userID}`, {
+  const response = await fetch(`${API_BASE_URL}/users/${userID}`, {
     method: "DELETE",
   });
 
