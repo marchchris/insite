@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require('path');
+const cors = require('cors');
 
 const { MongoClient } = require("mongodb");
 require('dotenv').config();
@@ -10,6 +11,14 @@ const dbName = process.env.MONGODB_DB_NAME;
 const collectionName = process.env.MONGODB_COLLECTION_NAME;
 
 const app = express();
+
+// CORS middleware configuration
+app.use(cors({
+    origin: ['https://insite-eta.vercel.app', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json()); // Middleware to parse JSON requests
 
 const client = new MongoClient(uri);
