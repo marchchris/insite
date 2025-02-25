@@ -455,7 +455,7 @@ export default function Dashboard() {
                     </div>
                 </div>
                 {/* Main Area */}
-                <div className="flex-1 overflow-y-auto bg-[#2a2a2a] py-4">
+                <div className="flex-1 overflow-y-auto bg-[#2a2a2a] 2xl:p-8 xl:p-4">
                     {/* Overview Page */}
                     {currentPage === "Overview" && (
 
@@ -519,7 +519,7 @@ export default function Dashboard() {
 
                             </div>
 
-                            <div className="flex w-full 2xl:h-5/6 xl:h-4/6 justify-center items-center mt-10">
+                            <div className="flex w-full h-5/6 justify-center items-center mt-10">
 
                                 <div className="flex flex-row w-full h-full px-4 gap-8">
                                     <div className="flex flex-col w-4/6 h-full p-8 bg-white bg-opacity-5 rounded-xl">
@@ -571,7 +571,7 @@ export default function Dashboard() {
 
                         <div className="flex flex-col w-full h-full bg-[#2a2a2a] ">
 
-                            <div className="flex flex w-5/6 h-full m-auto justify-center">
+                            <div className="flex flex 2xl:w-5/6 xl:w-full h-full m-auto justify-center">
                                 <div className="flex flex-col w-full h-full bg-white bg-opacity-5 rounded-xl p-8">
                                     <p className="text-white text-opacity-40">Results: <span className="text-white font-semibold">{filteredFeedbackData.length}</span></p>
 
