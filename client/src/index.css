@@ -6,6 +6,3 @@ html {
     scroll-behavior: smooth;
   }
 /* width */
-::-webkit-scrollbar {
-    display: none;
-}

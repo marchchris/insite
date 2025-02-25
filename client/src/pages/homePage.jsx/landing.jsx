@@ -20,7 +20,7 @@ export default function Landing(props) {
                 transition={{ duration: 0.5 }}
                 className="w-screen h-20 border-b border-white border-opacity-20 flex justify-center items-center z-10"
             >
-                <div className="w-1/2 flex justify-between items-center cursor-pointer">
+                <div className="2xl:w-1/2 xl:w-2/3 flex justify-between items-center cursor-pointer">
                     {/* Logo */}
                     <div>
                         <a className="text-xl font-bold" href='/'>In<span className="text-purple-300">Site</span></a>
@@ -58,7 +58,7 @@ export default function Landing(props) {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="w-screen h-1/3 flex justify-center items-center mt-10"
+                    className="w-screen h-1/3 flex justify-center items-center 2xl:mt-10 xl:mt-20"
                 >
                     <div className="w-1/2 flex flex-col">
                         <motion.div
@@ -84,7 +84,7 @@ export default function Landing(props) {
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.9 }}
-                            className="mt-10 absolute top-0 left-[400px]"
+                            className="mt-10 absolute 2xl:top-0 2xl:left-[400px] xl:left-[300px] lg:left-[200px] md:left-[100px] sm:left-[50px]"
                         >
                             <img src={LandingImage} alt="Landing Image" />
                         </motion.div>

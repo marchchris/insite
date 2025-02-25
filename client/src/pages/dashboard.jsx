@@ -713,7 +713,7 @@ export default function Dashboard() {
                                         </div>
                                     </div>
 
-                                    <div className="overflow-x-auto rounded-xl border border-white border-opacity-5 mb-10">
+                                    <div className="overflow-x-scroll rounded-xl border border-white border-opacity-5 mb-10 max-w-full">
                                         <table className="min-w-full divide-y-2 divide-white divide-opacity-15 text-sm">
                                             <thead className="text-left text-white">
                                                 <tr>

@@ -20,10 +20,10 @@ const code = `<a
 
 export default function DashboardSection() {
     return (
-        <div className="w-full px-32">
+        <div className="w-full 2xl:px-32 xl:px-4 2xl:mt-0 xl:mt-40">
             {/* Dashboard Section */}
             <FadeInOnScroll>
-                <div className="w-full flex flex-row items-center justify-center gap-8 p-10">
+                <div className="w-full flex flex-row items-center justify-center">
                     {/* Content Image */}
                     <div className="flex-1 flex justify-end p-16">
                         <img src={DashboardImage} alt="Dashboard Overview" className="w-full rounded-xl border border-white border-opacity-20" />
@@ -85,7 +85,7 @@ export default function DashboardSection() {
                         <div className="border border-white border-opacity-20 rounded-xl">
                             <CodeBlock language='html' code={code} />
                         </div>
-                        <div className="absolute -bottom-4 right-24 bg-[#121212] rounded-xl border border-white border-opacity-15">
+                        <div className="absolute -bottom-4 2xl:right-24 xl:right-4 bg-[#121212] rounded-xl border border-white border-opacity-15">
                             <div className="flex items-center gap-2 p-3">
                                 <div className="h-3 w-3 rounded-full bg-red-500"></div>
                                 <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
