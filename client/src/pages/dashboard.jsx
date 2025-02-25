@@ -468,7 +468,7 @@ export default function Dashboard() {
                                         <p className="text-sm text-white">Feedback Received</p>
                                         <p className="text-xs text-white opacity-40">Last 7 Days</p>
 
-                                        <p className="text-2xl font-medium text-white">{feedbackStats.received}</p>
+                                        <p className="2xl:text-2xl xl:text-lg font-medium text-white">{feedbackStats.received}</p>
                                     </div>
 
   
@@ -484,7 +484,7 @@ export default function Dashboard() {
                                         <p className="text-sm text-white">Positive Feedback</p>
                                         <p className="text-xs text-white opacity-40">Last 7 Days</p>
 
-                                        <p className="text-2xl font-medium text-white">{feedbackStats.positive}</p>
+                                        <p className="2xl:text-2xl xl:text-lg font-medium text-white">{feedbackStats.positive}</p>
                                     </div>
 
 
@@ -498,7 +498,7 @@ export default function Dashboard() {
                                         <p className="text-sm text-white">Negative Feedback</p>
                                         <p className="text-xs text-white opacity-40">Last 7 Days</p>
 
-                                        <p className="text-2xl font-medium text-white">{feedbackStats.negative}</p>
+                                        <p className="2xl:text-2xl xl:text-lg font-medium text-white">{feedbackStats.negative}</p>
                                     </div>
 
 
@@ -512,26 +512,26 @@ export default function Dashboard() {
                                         <p className="text-sm text-white">Feedback Resolved</p>
                                         <p className="text-xs text-white opacity-40">All Time</p>
 
-                                        <p className="text-2xl font-medium text-white">{resolvedNumber}</p>
+                                        <p className="2xl:text-2xl xl:text-lg font-medium text-white">{resolvedNumber}</p>
                                     </div>
                                 </article>
 
 
                             </div>
 
-                            <div className="flex w-full h-5/6 justify-center items-center mt-10">
+                            <div className="flex w-full h-5/6 justify-center items-center 2xl:mt-10 xl:mt-5">
 
                                 <div className="flex flex-row w-full h-full px-4 gap-8">
                                     <div className="flex flex-col w-4/6 h-full p-8 bg-white bg-opacity-5 rounded-xl">
-                                        <h1 className=" text-white font-semibold">Feedback Received Per Month</h1>
+                                        <h1 className=" text-white font-semibold 2xl:text-base xl:text-sm">Feedback Received Per Month</h1>
                                         <p className="text-xs text-white opacity-40">Last 12 Months</p>
                                         <div className="flex w-full h-full justify-center items-center">
                                             <FeedbackAmountChart feedbackData={userData.feedbackData} />
                                         </div>
                                     </div>
                                     <div className="flex flex-col w-2/6 h-full rounded-xl bg-white bg-opacity-5 p-8">
-                                        <h1 className="text-white font-semibold">Current Feedback Pending</h1>
-                                        <p className="text-xs text-white opacity-40">All Time</p>
+                                        <h1 className="text-white font-semibold 2xl:text-base xl:text-sm">Current Feedback Pending</h1>
+                                        <p className="text-xs text-white opacity-40 ">All Time</p>
                                         <div className="flex flex-row w-full h-full justify-center items-center">
                                             <div className="flex w-2/3 h-full justify-center items-center">
                                                 {/* If no feedback is pending, display no pending feedback message */}
@@ -545,15 +545,15 @@ export default function Dashboard() {
                                                 <ul className="space-y-3">
                                                     <li className="flex items-center">
                                                         <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                                                        <span className="text-white">Positive</span>
+                                                        <span className="text-white 2xl:text-base xl:text-sm">Positive</span>
                                                     </li>
                                                     <li className="flex items-center">
                                                         <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                                                        <span className="text-white">Negative</span>
+                                                        <span className="text-white 2xl:text-base xl:text-sm">Negative</span>
                                                     </li>
                                                     <li className="flex items-center">
                                                         <span className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
-                                                        <span className="text-white">Neutral</span>
+                                                        <span className="text-white 2xl:text-base xl:text-sm">Neutral</span>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -731,11 +731,11 @@ export default function Dashboard() {
                                                             </label>
                                                         </div>
                                                     </th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Name</th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Email</th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Category</th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Date Submitted</th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Rating</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-xs">Name</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-xs">Email</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-xs">Category</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-xs">Date Submitted</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-xs">Rating</th>
 
                                                 </tr>
                                             </thead>
@@ -743,7 +743,7 @@ export default function Dashboard() {
                                                 {/* If no feedback is available, display a message */}
                                                 {filteredFeedbackData.length === 0 && (
                                                     <tr>
-                                                        <td colSpan="6" className="text-center text-white opacity-40 py-4 2xl:text-base xl:text-sm">You have no current feedback</td>
+                                                        <td colSpan="6" className="text-center text-white opacity-40 py-4 2xl:text-base xl:text-xs">You have no current feedback</td>
                                                     </tr>
                                                 )}
                                                 {filteredFeedbackData.map((data, index) => (
@@ -760,20 +760,20 @@ export default function Dashboard() {
                                                                 </label>
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white font-semibold 2xl:text-base xl:text-sm">{data.name}</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60 2xl:text-base xl:text-sm">{data.email}</td>
+                                                        <td className="px-4 py-2 whitespace-nowrap text-white font-semibold 2xl:text-base xl:text-xs">{data.name}</td>
+                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60 2xl:text-base xl:text-xs">{data.email}</td>
                                                         <td className="px-4 py-2 whitespace-nowrap">
-                                                            <div className={`inline-block py-1 px-3 rounded-full font-semibold 2xl:text-base xl:text-sm ${data.category === "Bug" ? "bg-red-500 text-red-100" : data.category === "Design" ? "bg-blue-500 text-blue-100" : data.category === "Feature" ? "bg-green-500 text-green-100" : "bg-yellow-500 text-yellow-100 "}`}>
+                                                            <div className={`inline-block py-1 px-3 rounded-full font-semibold 2xl:text-base xl:text-xs ${data.category === "Bug" ? "bg-red-500 text-red-100" : data.category === "Design" ? "bg-blue-500 text-blue-100" : data.category === "Feature" ? "bg-green-500 text-green-100" : "bg-yellow-500 text-yellow-100 "}`}>
                                                                 {data.category}
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60 2xl:text-base xl:text-sm">
+                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60 2xl:text-base xl:text-xs">
                                                             {new Date(data.dateSubmitted).toLocaleString('en-GB', dateOptions)}
                                                         </td>
                                                         <td className="px-4 py-2 whitespace-nowrap text-white">
                                                             <div className="flex flex-col items-center">
                                                                 <span className="text-xs text-white opacity-60">{data.rating}/10</span>
-                                                                <div className="w-full bg-white bg-opacity-10 rounded-full h-2.5 2xl:text-base xl:text-sm">
+                                                                <div className="w-full bg-white bg-opacity-10 rounded-full h-2.5 2xl:text-base xl:text-xs">
                                                                     <div className={`h-2.5 rounded-full ${data.rating <= 4 ? "bg-red-500" : data.rating <= 7 ? "bg-yellow-500" : "bg-green-500"} bg-opacity-100`} style={{ width: `${data.rating * 10}%` }}></div>
                                                                 </div>
                                                             </div>
@@ -787,8 +787,8 @@ export default function Dashboard() {
                                                                         </svg>
                                                                     </summary>
                                                                     <ul className="mt-2 w-32 rounded-md shadow-lg z-50 bg-neutral-600 border border-neutral-500 absolute right-0">
-                                                                        <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-300" onClick={(event) => handleRowTabViewClick(data, event)}>View</li>
-                                                                        <li className="block px-4 py-2 text-sm text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-30" onClick={(event) => handleRowTabDeleteClick(data, event)}>Resolve</li>
+                                                                        <li className="block px-4 py-2 text-xs text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-300" onClick={(event) => handleRowTabViewClick(data, event)}>View</li>
+                                                                        <li className="block px-4 py-2 text-xs text-white hover:bg-neutral-500 hover:rounded-md cursor-pointer transition duration-30" onClick={(event) => handleRowTabDeleteClick(data, event)}>Resolve</li>
                                                                     </ul>
                                                                 </details>
                                                             </div>
@@ -1121,35 +1121,35 @@ export default function Dashboard() {
                         <div className="flex flex-col w-full h-full bg-[#2a2a2a]">
                             <div className="flex w-2/5 m-auto">
                                 <div className="flex flex-col w-full bg-white bg-opacity-5 rounded-xl p-8">
-                                    <h2 className="text-white text-xl font-bold mb-6">Account Information</h2>
+                                    <h2 className="text-white 2xl:text-xl xl:text-lg font-bold mb-6">Account Information</h2>
 
                                     <div className="space-y-4">
                                         <div className="flex flex-col space-y-1">
-                                            <label className="text-white opacity-60">Email</label>
-                                            <p className="text-white">{user.email}</p>
+                                            <label className="text-white opacity-60 2xl:text-base xl:text-sm">Email</label>
+                                            <p className="text-white 2xl:text-base xl:text-sm">{user.email}</p>
                                         </div>
 
                                         <div className="flex flex-col space-y-1">
-                                            <label className="text-white opacity-60">Account Created</label>
-                                            <p className="text-white">
+                                            <label className="text-white opacity-60 2xl:text-base xl:text-sm">Account Created</label>
+                                            <p className="text-white 2xl:text-base xl:text-sm">
                                                 {new Date(user.metadata.creationTime).toLocaleString('en-GB', dateOptions)}
                                             </p>
                                         </div>
 
                                         <div className="flex flex-col space-y-1">
-                                            <label className="text-white opacity-60">Last Sign In</label>
-                                            <p className="text-white">
+                                            <label className="text-white opacity-60 2xl:text-base xl:text-sm">Last Sign In</label>
+                                            <p className="text-white 2xl:text-base xl:text-sm">
                                                 {new Date(user.metadata.lastSignInTime).toLocaleString('en-GB', dateOptions)}
                                             </p>
                                         </div>
 
                                         <div className="mt-8 pt-8 border-t border-white border-opacity-15">
-                                            <h3 className="text-red-500 text-lg font-semibold mb-4">Danger Zone</h3>
+                                            <h3 className="text-red-500 2xl:text-lg xl:text-base font-semibold mb-4">Danger Zone</h3>
 
                                             <details className="group">
                                                 <summary className="flex cursor-pointer items-center justify-between rounded-lg bg-red-500 bg-opacity-10 p-4 text-red-500">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-medium">Delete Account</span>
+                                                        <span className="2xl:text-sm xl:text-xs font-medium">Delete Account</span>
                                                     </div>
 
                                                     <span className="shrink-0 transition duration-300 group-open:-rotate-180">
@@ -1160,7 +1160,7 @@ export default function Dashboard() {
                                                 </summary>
 
                                                 <div className="mt-4 px-4 pb-4">
-                                                    <p className="text-sm text-white opacity-60 mb-4">
+                                                    <p className="2xl:text-sm xl:text-xs text-white opacity-60 mb-4">
                                                         This action cannot be undone. This will permanently delete your account and remove all your data from our servers.
                                                     </p>
 
@@ -1168,7 +1168,7 @@ export default function Dashboard() {
                                                         <input
                                                             type="email"
                                                             placeholder="Type your email to confirm"
-                                                            className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-red-500 focus:outline-none"
+                                                            className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-red-500 focus:outline-none 2xl:text-base xl:text-sm"
                                                             value={deleteAccountEmail}
                                                             onChange={(e) => setDeleteAccountEmail(e.target.value)}
                                                         />
@@ -1202,7 +1202,7 @@ export default function Dashboard() {
                                                                     setDeleteError("Email doesn't match");
                                                                 }
                                                             }}
-                                                            className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300"
+                                                            className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300 2xl:text-base xl:text-sm"
                                                         >
                                                             Delete Account
                                                         </button>
