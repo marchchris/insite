@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://insite-server.vercel.app';
+const API_BASE_URL = process.env.REACT_APP_SERVER_URL;
 
 // Function to retrieve user by userID
 export async function getUserById(userID) {

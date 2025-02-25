@@ -455,14 +455,14 @@ export default function Dashboard() {
                     </div>
                 </div>
                 {/* Main Area */}
-                <div className="flex-1 overflow-y-auto bg-[#2a2a2a] p-8">
+                <div className="flex-1 overflow-y-auto bg-[#2a2a2a] py-4">
                     {/* Overview Page */}
                     {currentPage === "Overview" && (
 
                         <div className="flex flex-col w-full h-full bg-[#2a2a2a]">
                             <div className="flex w-full h-1/6 justify-center items-center">
                                 <article
-                                    className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 p-8 py-10 w-1/4 mx-4"
+                                    className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 2xl:p-10 xl:p-5 w-1/4 mx-4"
                                 >
                                     <div>
                                         <p className="text-sm text-white">Feedback Received</p>
@@ -478,7 +478,7 @@ export default function Dashboard() {
                                 </article>
 
                                 <article
-                                    className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 p-10 w-1/4 mx-4"
+                                    className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 2xl:p-10 xl:p-5 w-1/4 mx-4"
                                 >
                                     <div>
                                         <p className="text-sm text-white">Positive Feedback</p>
@@ -492,7 +492,7 @@ export default function Dashboard() {
                                 </article>
 
                                 <article
-                                    className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 p-10 w-1/4 mx-4"
+                                    className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 2xl:p-10 xl:p-5 w-1/4 mx-4"
                                 >
                                     <div>
                                         <p className="text-sm text-white">Negative Feedback</p>
@@ -506,7 +506,7 @@ export default function Dashboard() {
                                 </article>
 
                                 <article
-                                    className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 p-10 w-1/4 mx-4"
+                                    className="flex items-end justify-between rounded-xl bg-white bg-opacity-5 2xl:p-10 xl:p-5 w-1/4 mx-4"
                                 >
                                     <div>
                                         <p className="text-sm text-white">Feedback Resolved</p>
@@ -519,7 +519,7 @@ export default function Dashboard() {
 
                             </div>
 
-                            <div className="flex w-full h-5/6 justify-center items-center mt-10">
+                            <div className="flex w-full 2xl:h-5/6 xl:h-4/6 justify-center items-center mt-10">
 
                                 <div className="flex flex-row w-full h-full px-4 gap-8">
                                     <div className="flex flex-col w-4/6 h-full p-8 bg-white bg-opacity-5 rounded-xl">
@@ -731,11 +731,11 @@ export default function Dashboard() {
                                                             </label>
                                                         </div>
                                                     </th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap">Name</th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap">Email</th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap">Category</th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap">Date Submitted</th>
-                                                    <th className="px-4 py-2 font-medium whitespace-nowrap">Rating</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Name</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Email</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Category</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Date Submitted</th>
+                                                    <th className="px-4 py-2 font-medium whitespace-nowrap 2xl:text-base xl:text-sm">Rating</th>
 
                                                 </tr>
                                             </thead>
@@ -743,7 +743,7 @@ export default function Dashboard() {
                                                 {/* If no feedback is available, display a message */}
                                                 {filteredFeedbackData.length === 0 && (
                                                     <tr>
-                                                        <td colSpan="6" className="text-center text-white opacity-40 py-4">You have no current feedback</td>
+                                                        <td colSpan="6" className="text-center text-white opacity-40 py-4 2xl:text-base xl:text-sm">You have no current feedback</td>
                                                     </tr>
                                                 )}
                                                 {filteredFeedbackData.map((data, index) => (
@@ -760,20 +760,20 @@ export default function Dashboard() {
                                                                 </label>
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white font-semibold">{data.name}</td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">{data.email}</td>
+                                                        <td className="px-4 py-2 whitespace-nowrap text-white font-semibold 2xl:text-base xl:text-sm">{data.name}</td>
+                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60 2xl:text-base xl:text-sm">{data.email}</td>
                                                         <td className="px-4 py-2 whitespace-nowrap">
-                                                            <div className={`inline-block py-1 px-3 rounded-full font-semibold ${data.category === "Bug" ? "bg-red-500 text-red-100" : data.category === "Design" ? "bg-blue-500 text-blue-100" : data.category === "Feature" ? "bg-green-500 text-green-100" : "bg-yellow-500 text-yellow-100 "}`}>
+                                                            <div className={`inline-block py-1 px-3 rounded-full font-semibold 2xl:text-base xl:text-sm ${data.category === "Bug" ? "bg-red-500 text-red-100" : data.category === "Design" ? "bg-blue-500 text-blue-100" : data.category === "Feature" ? "bg-green-500 text-green-100" : "bg-yellow-500 text-yellow-100 "}`}>
                                                                 {data.category}
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60">
+                                                        <td className="px-4 py-2 whitespace-nowrap text-white opacity-60 2xl:text-base xl:text-sm">
                                                             {new Date(data.dateSubmitted).toLocaleString('en-GB', dateOptions)}
                                                         </td>
                                                         <td className="px-4 py-2 whitespace-nowrap text-white">
                                                             <div className="flex flex-col items-center">
                                                                 <span className="text-xs text-white opacity-60">{data.rating}/10</span>
-                                                                <div className="w-full bg-white bg-opacity-10 rounded-full h-2.5">
+                                                                <div className="w-full bg-white bg-opacity-10 rounded-full h-2.5 2xl:text-base xl:text-sm">
                                                                     <div className={`h-2.5 rounded-full ${data.rating <= 4 ? "bg-red-500" : data.rating <= 7 ? "bg-yellow-500" : "bg-green-500"} bg-opacity-100`} style={{ width: `${data.rating * 10}%` }}></div>
                                                                 </div>
                                                             </div>
@@ -807,18 +807,18 @@ export default function Dashboard() {
                         <div className="flex flex-col w-full h-full bg-[#2a2a2a]">
                             <div className="flex m-auto">
                                 <div className="flex flex-col w-full bg-white bg-opacity-5 rounded-xl p-8 justify-center items-center">
-                                    <h2 className="text-white text-xl font-bold">Your Public Key</h2>
-                                    <p className="text-white opacity-60 mt-4 text-sm">Use this API key to integrate the feedback form into your website.</p>
+                                    <h2 className="text-white 2xl:text-xl xl:text-lg font-bold">Your Public Key</h2>
+                                    <p className="text-white opacity-60 mt-4 2xl:text-sm xl:text-xs">Use this API key to integrate the feedback form into your website.</p>
 
                                     <div className="inline flex items-center gap-1 w-full">
                                         <div className="rounded-lg p-4 font-mono text-sm w-full flex justify-center items-center">
-                                            <pre className="text-white overflow-x-auto w-full bg-neutral-700 p-4 rounded-lg text-center">
+                                            <pre className="text-white overflow-x-auto w-full bg-neutral-700 2xl:p-4 xl:p-2 rounded-lg text-center 2xl:text-base xl:text-sm">
                                                 {userData.apiKey}
                                             </pre>
                                         </div>
                                         <button
                                             onClick={() => navigator.clipboard.writeText(userData.apiKey)}
-                                            className="px-4 w-1/2 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300 flex items-center gap-2"
+                                            className="px-4 w-1/2 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300 flex items-center gap-2  2xl:text-base xl:text-sm"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
@@ -828,7 +828,7 @@ export default function Dashboard() {
                                     </div>
 
                                     <div className="mt-4 w-full flex flex-col justify-center items-center">
-                                        <h3 className="text-white text-lg font-medium mb-2 text-center">Implementation Example</h3>
+                                        <h3 className="text-white 2xl:text-lg xl:text-base font-medium mb-2 text-center">Implementation Example</h3>
                                         <div className="rounded-lg p-4 font-mono text-sm w-full">
                                             {/* Code block for example implementation of button that uses api key in link */}
                                             <CodeBlock language='html' code={code} />;
@@ -837,8 +837,8 @@ export default function Dashboard() {
                                     </div>
 
                                     <div className="w-full flex flex-col justify-center items-center">
-                                        <h3 className="text-white text-lg font-medium mb-2 text-center">See Your Form Live</h3>
-                                        <p className="text-white opacity-60 text-sm mb-4 font-medium">
+                                        <h3 className="text-white 2xl:text-lg xl:text-base font-medium mb-2 text-center">See Your Form Live</h3>
+                                        <p className="text-white opacity-60 mb-4 font-medium 2xl:text-sm xl:text-xs">
                                             Your form is now live at: <a href={`${window.location.origin}/form/${userData.apiKey}`} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 transition-colors">
                                                 {window.location.origin}/form/{userData.apiKey}
                                             </a>
@@ -846,7 +846,7 @@ export default function Dashboard() {
                                         {/* Button that onClick goes to form */}
                                         <button
                                             onClick={() => window.open(`${window.location.origin}/form/${userData.apiKey}`, '_blank')}
-                                            className="px-4 w-1/2 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300 flex items-center justify-center gap-2"
+                                            className="px-4 w-1/2 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-300 flex items-center justify-center gap-2 2xl:text-base xl:text-sm"
                                         >
                                             Go To Form
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -864,7 +864,7 @@ export default function Dashboard() {
                             <div className="flex w-full h-fit m-auto gap-2 justify-center">
                                 {/* Settings Panel */}
                                 <div className="flex flex-col w-1/3 h-fit bg-white bg-opacity-5 rounded-xl p-8">
-                                    <h2 className="text-white text-xl font-bold mb-6">Form Customisation</h2>
+                                    <h2 className="text-white 2xl:text-xl xl:text-lg font-bold mb-6">Form Customisation</h2>
 
                                     {saveStatus.message && (
                                         <div className={`mb-4 p-4 rounded ${saveStatus.type === 'success' ? 'bg-green-500/20 text-green-200' :
@@ -876,9 +876,9 @@ export default function Dashboard() {
 
                                     <div className="space-y-6">
                                         <div className="flex items-center justify-between">
-                                            <label className="text-white">Theme</label>
+                                            <label className="text-white 2xl:text-base xl:text-sm">Theme</label>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm text-white opacity-70">
+                                                <span className="text-white opacity-70 2xl:text-sm xl:text-xs">
                                                     {formSettings.theme === "dark" ? "Dark Mode" : "Light Mode"}
                                                 </span>
                                                 <button
@@ -899,7 +899,7 @@ export default function Dashboard() {
                                         </div>
 
                                         <div>
-                                            <label className="block text-white mb-2">Form Title</label>
+                                            <label className="block text-white mb-2 2xl:text-base xl:text-sm">Form Title</label>
                                             <input
                                                 type="text"
                                                 maxLength = "64"
@@ -911,12 +911,12 @@ export default function Dashboard() {
                                                     }));
                                                     setIsEdited(true);
                                                 }}
-                                                className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-purple-500 focus:outline-none"
+                                                className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-purple-500 focus:outline-none 2xl:text-base xl:text-sm"
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-white mb-2">Form Description</label>
+                                            <label className="block text-white mb-2 2xl:text-base xl:text-sm">Form Description</label>
                                             <textarea
                                                 value={formSettings.formDescription}
                                                 maxLength="200"
@@ -928,7 +928,7 @@ export default function Dashboard() {
                                                     setIsEdited(true);
                                                 }}
                                                 rows="4"
-                                                className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-purple-500 focus:outline-none"
+                                                className="w-full p-2 rounded bg-neutral-700 text-white border border-neutral-600 focus:border-purple-500 focus:outline-none 2xl:text-base xl:text-sm"
                                             />
                                         </div>
 
@@ -956,7 +956,7 @@ export default function Dashboard() {
                                                 className={`px-4 py-2 rounded ${isEdited
                                                     ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
                                                     : 'bg-neutral-600 text-neutral-400 cursor-not-allowed'
-                                                    } transition-colors`}
+                                                    } transition-colors 2xl:text-base xl:text-sm`}
                                             >
                                                 Save Changes
                                             </button>
