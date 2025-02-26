@@ -1,10 +1,10 @@
 # InSite - Website Feedback System
 
-
-
 InSite is a modern, user-friendly feedback collection system designed to help website owners gather, manage, and analyze user feedback efficiently. With an easy-to-integrate widget and comprehensive dashboard, InSite makes it simple to understand your users' needs and improve your website experience.
 
-<img src="dashboardImage.png" width="600" alt="Dashboard Preview">
+<div align="center">
+  <img src="dashboardImage.png" width="600" alt="Dashboard Preview">
+</div>
 
 ## Features
 
