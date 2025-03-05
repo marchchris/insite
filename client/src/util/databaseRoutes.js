@@ -2,7 +2,6 @@ const API_BASE_URL = process.env.REACT_APP_SERVER_URL;
 
 // Function to retrieve user by userID
 export async function getUserById(userID) {
-  console.log("Fetching user data for ", userID);
   const response = await fetch(`${API_BASE_URL}/users/${userID}`);
   if (!response.ok) {
     throw new Error("User not found");
