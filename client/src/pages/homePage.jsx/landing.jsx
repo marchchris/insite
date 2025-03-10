@@ -23,7 +23,7 @@ export default function Landing(props) {
                 <div className="2xl:w-1/2 xl:w-1/2 flex justify-between items-center cursor-pointer">
                     {/* Logo */}
                     <div>
-                        <a className="text-xl font-bold" href='/'>In<span className="text-purple-300">Site</span></a>
+                        <a className="text-2xl font-bold" href='/'>In<span className="text-purple-300">Site</span></a>
                     </div>
                     {/* Center Links */}
                     <div className="justify-center items-center flex space-x-10">
