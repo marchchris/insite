@@ -20,7 +20,7 @@ export default function Landing(props) {
                 transition={{ duration: 0.5 }}
                 className="w-screen h-20 border-b border-white border-opacity-20 flex justify-center items-center z-10"
             >
-                <div className="2xl:w-1/2 xl:w-1/2 flex justify-between items-center cursor-pointer">
+                <div className="2xl:w-1/2 w-1/2 flex justify-between items-center cursor-pointer">
                     {/* Logo */}
                     <div>
                         <a className="text-2xl font-bold" href='/'>In<span className="text-purple-300">Site</span></a>
@@ -58,7 +58,7 @@ export default function Landing(props) {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="w-screen h-1/3 flex justify-center items-center 2xl:mt-10 xl:mt-20"
+                    className="w-screen h-1/3 flex justify-center items-center 2xl:mt-10 mt-20"
                 >
                     <div className="w-1/2 flex flex-col">
                         <motion.div
@@ -67,12 +67,12 @@ export default function Landing(props) {
                             transition={{ duration: 0.5, delay: 0.6 }}
                             className="z-10"
                         >
-                            <h1 className="2xl:text-6xl xl:text-5xl font-medium text-white">Effortless <span className="text-purple-300">Feedback</span></h1>
-                            <h1 className="2xl:text-6xl xl:text-5xl font-medium text-white"><span className="text-purple-300">Powerful</span> Insights</h1>
-                            <p className="mt-4 w-2/3 opacity-70 2xl:text-base xl:text-sm">Collect, manage, and act on user feedback. Empower your website or service with a simple, elegant feedback system designed to help you grow.</p>
+                            <h1 className="2xl:text-6xl text-5xl font-medium text-white">Effortless <span className="text-purple-300">Feedback</span></h1>
+                            <h1 className="2xl:text-6xl text-5xl font-medium text-white"><span className="text-purple-300">Powerful</span> Insights</h1>
+                            <p className="mt-4 w-2/3 opacity-70 2xl:text-base text-sm">Collect, manage, and act on user feedback. Empower your website or service with a simple, elegant feedback system designed to help you grow.</p>
                             <div className="mt-4 flex space-x-6 items-center cursor-pointer">
-                                <button className="transition duration-300 py-2 px-4 bg-purple-400 rounded-lg text-white hover:bg-purple-500 text-[#fcfcff] font-medium  2xl:text-base xl:text-sm">Get Started</button>
-                                <a className="opacity-70 font-medium hover:opacity-100 transition duration-300 flex items-center 2xl:text-base xl:text-sm" href="/dashboard">
+                                <button className="transition duration-300 py-2 px-4 bg-purple-400 rounded-lg text-white hover:bg-purple-500 text-[#fcfcff] font-medium  2xl:text-base text-sm">Get Started</button>
+                                <a className="opacity-70 font-medium hover:opacity-100 transition duration-300 flex items-center 2xl:text-base text-sm" href="/dashboard">
                                     Go To Dashboard
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5 ml-1">
                                         <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />

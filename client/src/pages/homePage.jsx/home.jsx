@@ -37,7 +37,7 @@ const HomePage = () => {
                         <FadeInOnScroll>
                             <div className="text-center">
                                 <FadeInOnScroll>
-                                    <h2 className="2xl:text-5xl xl:text-4xl font-bold">
+                                    <h2 className="2xl:text-5xl text-4xl font-bold">
                                         Want To Get Started?
                                     </h2>
 
