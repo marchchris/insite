@@ -968,11 +968,11 @@ export default function Dashboard() {
                                 <div className="flex flex-col bg-white bg-opacity-5 rounded-xl p-8 w-fit" style={{ transform: 'scale(0.75)', transformOrigin: 'top center' }}>
                                     <h2 className="text-white text-2xl font-bold mb-6">Preview</h2>
                                     {formSettings.theme === "dark" ? (
-                                        <form className="bg-white bg-opacity-5 p-8 rounded-lg border text-white flex border border-white border-opacity-15">
-                                            <div className="p-8 rounded-lg text-white">
+                                        <form className="bg-white bg-opacity-5 p-4 rounded-lg border text-white flex border border-white border-opacity-15">
+                                            <div className="px-8 py-4 rounded-lg text-white">
                                                 <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
                                                 <p className="text-center text-white opacity-70 max-w-md mx-auto">{formSettings.formDescription}</p>
-                                                <div className="mt-4">
+                                                <div className="mt-2">
                                                     <div>
                                                         <label class="text-white text-sm mb-2 block">Name</label>
                                                         <input
@@ -995,7 +995,7 @@ export default function Dashboard() {
                                                         />
                                                     </div>
 
-                                                    <div className="mt-8">
+                                                    <div className="mt-2">
                                                         <label class="text-white text-sm block">Category</label>
                                                         <select
                                                             name="HeadlineAct"
@@ -1011,7 +1011,7 @@ export default function Dashboard() {
                                                         </select>
                                                     </div>
 
-                                                    <div className="mt-4">
+                                                    <div className="mt-3">
                                                         <label for="rating" class="block mb-2 text-sm text-white">Rating: <span className="font-bold">{rating}/10</span></label>
                                                         <input
                                                             id="rating"
@@ -1023,7 +1023,7 @@ export default function Dashboard() {
                                                             class="w-full h-2 bg-white bg-opacity-10 rounded-lg appearance-none cursor-pointer accent-purple-300">
                                                         </input>
                                                     </div>
-                                                    <div className="mt-4">
+                                                    <div className="mt-2">
                                                         <label class="text-white text-sm mb-2 block">Message</label>
                                                         <textarea
                                                             name="message"
@@ -1033,18 +1033,18 @@ export default function Dashboard() {
                                                             placeholder="Enter your message (at least 50 characters)">
                                                         </textarea>
                                                     </div>
-                                                    <div className="mt-4">
+                                                    <div className="mt-2">
                                                         {submitButton}
                                                     </div>
                                                 </div>
                                             </div>
                                         </form>
                                     ) : (
-                                        <form className="gap-2 shadow bg-gray-100 p-8 rounded-lg border border-gray-300 text-black flex flex-row">
-                                            <div className="p-8 rounded-lg text-black">
+                                        <form className="gap-2 shadow bg-gray-100 p-4 rounded-lg border border-gray-300 text-black flex flex-row">
+                                            <div className="px-8 py-4 rounded-lg text-black">
                                                 <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
                                                 <p className="text-center text-gray-700 max-w-md mx-auto">{formSettings.formDescription}</p>
-                                                <div className="mt-4">
+                                                <div className="mt-2">
                                                     <div>
                                                         <label class="text-black text-sm mb-2 block">Name</label>
                                                         <input
@@ -1067,7 +1067,7 @@ export default function Dashboard() {
                                                         />
                                                     </div>
 
-                                                    <div className="mt-8">
+                                                    <div className="mt-3">
                                                         <label class="text-black text-sm block">Category</label>
                                                         <select
                                                             name="HeadlineAct"
@@ -1083,7 +1083,7 @@ export default function Dashboard() {
                                                         </select>
                                                     </div>
 
-                                                    <div className="mt-4">
+                                                    <div className="mt-2">
                                                         <label for="rating" class="block mb-2 text-sm text-black">Rating: <span className="font-bold">{rating}/10</span></label>
                                                         <input
                                                             id="rating"
@@ -1095,7 +1095,7 @@ export default function Dashboard() {
                                                             class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-purple-400">
                                                         </input>
                                                     </div>
-                                                    <div className="mt-4">
+                                                    <div className="mt-2">
                                                         <label class="text-black text-sm mb-2 block">Message</label>
                                                         <textarea
                                                             name="message"
@@ -1105,7 +1105,7 @@ export default function Dashboard() {
                                                             placeholder="Enter your message (at least 50 characters)">
                                                         </textarea>
                                                     </div>
-                                                    <div className="mt-4">
+                                                    <div className="mt-2">
                                                         {submitButton}
                                                     </div>
                                                 </div>
