@@ -71,7 +71,7 @@ export default function Landing(props) {
                             <h1 className="2xl:text-6xl text-5xl font-medium text-white"><span className="text-purple-300">Powerful</span> Insights</h1>
                             <p className="mt-4 w-2/3 opacity-70 2xl:text-base text-sm">Collect, manage, and act on user feedback. Empower your website or service with a simple, elegant feedback system designed to help you grow.</p>
                             <div className="mt-4 flex space-x-6 items-center cursor-pointer">
-                                <button className="transition duration-300 py-2 px-4 bg-purple-400 rounded-lg text-white hover:bg-purple-500 text-[#fcfcff] font-medium  2xl:text-base text-sm">Get Started</button>
+                                <a className="transition duration-300 py-2 px-4 bg-purple-400 rounded-lg text-white hover:bg-purple-500 text-[#fcfcff] font-medium  2xl:text-base text-sm" href = "/register">Get Started</a>
                                 <a className="opacity-70 font-medium hover:opacity-100 transition duration-300 flex items-center 2xl:text-base text-sm" href="/dashboard">
                                     Go To Dashboard
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5 ml-1">
