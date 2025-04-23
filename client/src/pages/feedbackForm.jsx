@@ -57,7 +57,7 @@ const FeedbackForm = (props) => {
         <button 
             type="submit" 
             disabled={hasRecentSubmission}
-            className={`w-full ${hasRecentSubmission ? 'bg-gray-400' : 'bg-purple-600'} text-white py-3 rounded-md`}
+            className={`w-full ${hasRecentSubmission ? 'bg-gray-400' : 'bg-purple-600'} text-white py-3 rounded-md text-xs xl:text-sm`}
         >
             {hasRecentSubmission ? 'Recently Submitted' : 'Submit Feedback'}
         </button>
@@ -67,20 +67,20 @@ const FeedbackForm = (props) => {
         <>
             {formSettings.theme === "dark" ? (
                 <div className="w-screen h-screen bg-[#2a2a2a] text-white justify-center items-center flex">
-                    <form onSubmit={handleSubmit} className="gap-2 bg-white bg-opacity-5 p-8 rounded-lg border border-white border-opacity-10 text-white flex flex-row border border-white border-opacity-15">
-                        <div className="p-8 rounded-lg text-white w-1/2">
-                            <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
-                            <p className="text-center text-white opacity-70 max-w-md mx-auto">{formSettings.formDescription}</p>
+                    <form onSubmit={handleSubmit} className="gap-2 bg-white bg-opacity-5 p-4 rounded-lg border border-white border-opacity-10 text-white flex flex-row border border-white border-opacity-15">
+                        <div className="p-8 rounded-lg text-white w-full">
+                            <h1 className="text-xl xl:text-2xl font-bold text-center">{formSettings.formTitle}</h1>
+                            <p className="text-center text-white opacity-70 max-w-md mx-auto text-sm xl:text-base">{formSettings.formDescription}</p>
                             <div className="mt-4">
-                                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                {success && <p className="text-green-500 text-sm text-center">{success}</p>}
+                                {error && <p className="text-red-500 text-xs xl:text-sm text-center">{error}</p>}
+                                {success && <p className="text-green-500 text-xs xl:text-sm text-center">{success}</p>}
                                 <div>
-                                    <label class="text-white text-sm mb-2 block">Name</label>
+                                    <label className="text-white text-xs xl:text-sm mb-2 block">Name</label>
                                     <input 
                                         name="name" 
                                         type="text" 
                                         required 
-                                        class="w-full bg-white bg-opacity-5 text-neutral-300 text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none" 
+                                        className="w-full bg-white bg-opacity-5 text-neutral-300 text-xs xl:text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none" 
                                         placeholder="Enter name" 
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
@@ -88,12 +88,12 @@ const FeedbackForm = (props) => {
                                 </div>
 
                                 <div className="mt-2">
-                                    <label class="text-white text-sm mb-2 block">Email</label>
+                                    <label className="text-white text-xs xl:text-sm mb-2 block">Email</label>
                                     <input 
                                         name="email" 
                                         type="text" 
                                         required 
-                                        class="w-full bg-white bg-opacity-5 text-neutral-300 text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none" 
+                                        className="w-full bg-white bg-opacity-5 text-neutral-300 text-xs xl:text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none" 
                                         placeholder="Enter email" 
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -101,12 +101,12 @@ const FeedbackForm = (props) => {
                                 </div>
 
                                 <div className="mt-8">
-                                    <label class="text-white text-sm block">Category</label>
+                                    <label className="text-white text-xs xl:text-sm block">Category</label>
                                     <select
                                         name="HeadlineAct"
                                         id="HeadlineAct"
                                         required
-                                        className="focus:outline-none mt-1.5 px-4 py-3 w-full bg-white bg-opacity-5 rounded-lg border border-white border-opacity-15 text-white sm:text-sm"
+                                        className="focus:outline-none mt-1.5 px-4 py-3 w-full bg-white bg-opacity-5 rounded-lg border border-white border-opacity-15 text-white text-xs xl:text-sm"
                                         value={category}
                                         onChange={(e) => setCategory(e.target.value)}
                                     >
@@ -119,7 +119,7 @@ const FeedbackForm = (props) => {
                                 </div>
 
                                 <div className="mt-4">
-                                    <label for="rating" class="block mb-2 text-sm text-white">Rating: <span className = "font-bold">{rating}/10</span></label>
+                                    <label htmlFor="rating" className="block mb-2 text-xs xl:text-sm text-white">Rating: <span className="font-bold">{rating}/10</span></label>
                                     <input 
                                         id="rating" 
                                         type="range" 
@@ -127,18 +127,18 @@ const FeedbackForm = (props) => {
                                         max="10" 
                                         value={rating} 
                                         onChange={(e) => setRating(e.target.value)} 
-                                        class="w-full h-2 bg-white bg-opacity-10 rounded-lg appearance-none cursor-pointer accent-purple-300">
+                                        className="w-full h-2 bg-white bg-opacity-10 rounded-lg appearance-none cursor-pointer accent-purple-300">
                                     </input>
                                 </div>
                                 <div className="mt-4">
-                                    <label class="text-white text-sm mb-2 block">Message</label>
+                                    <label className="text-white text-xs xl:text-sm mb-2 block">Message</label>
                                     <textarea 
                                         name="message" 
                                         rows="4" 
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
                                         required
-                                        class="w-full bg-white bg-opacity-5 text-neutral-300 text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none" 
+                                        className="w-full bg-white bg-opacity-5 text-neutral-300 text-xs xl:text-sm border border-white border-opacity-15 px-4 py-3 rounded-md focus:outline-none" 
                                         placeholder="Enter your message (at least 50 characters)">
                                     </textarea>
                                 </div>
@@ -147,27 +147,24 @@ const FeedbackForm = (props) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="rounded-lg text-white flex flex-col items-center justify-center">
-                            <img src={FeedbackImage} alt="Feedback" className = "h-2/3"/>
-                        </div>
                     </form>
                 </div >
             ) : (
                 <div className="w-screen h-screen bg-gray-100 text-black justify-center items-center flex">
-                    <form onSubmit={handleSubmit} className="gap-2 shadow bg-gray-100 p-8 rounded-lg border border-gray-300 text-black flex flex-row">
-                        <div className="p-8 rounded-lg text-black w-1/2">
-                            <h1 className="text-2xl font-bold text-center">{formSettings.formTitle}</h1>
-                            <p className="text-center text-gray-700 max-w-md mx-auto">{formSettings.formDescription}</p>
+                    <form onSubmit={handleSubmit} className="gap-2 shadow bg-gray-100 p-4 rounded-lg border border-gray-300 text-black flex flex-row">
+                        <div className="p-8 rounded-lg text-black w-full">
+                            <h1 className="text-xl xl:text-2xl font-bold text-center">{formSettings.formTitle}</h1>
+                            <p className="text-center text-gray-700 max-w-md mx-auto text-sm xl:text-base">{formSettings.formDescription}</p>
                             <div className="mt-4">
-                                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                                {success && <p className="text-green-500 text-sm text-center">{success}</p>}
+                                {error && <p className="text-red-500 text-xs xl:text-sm text-center">{error}</p>}
+                                {success && <p className="text-green-500 text-xs xl:text-sm text-center">{success}</p>}
                                 <div>
-                                    <label class="text-black text-sm mb-2 block">Name</label>
+                                    <label className="text-black text-xs xl:text-sm mb-2 block">Name</label>
                                     <input 
                                         name="name" 
                                         type="text" 
                                         required 
-                                        class="w-full bg-gray-100 text-black text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none" 
+                                        className="w-full bg-gray-100 text-black text-xs xl:text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none" 
                                         placeholder="Enter name" 
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
@@ -175,12 +172,12 @@ const FeedbackForm = (props) => {
                                 </div>
 
                                 <div className="mt-2">
-                                    <label class="text-black text-sm mb-2 block">Email</label>
+                                    <label className="text-black text-xs xl:text-sm mb-2 block">Email</label>
                                     <input 
                                         name="email" 
                                         type="text" 
                                         required 
-                                        class="w-full bg-gray-100 text-black text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none" 
+                                        className="w-full bg-gray-100 text-black text-xs xl:text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none" 
                                         placeholder="Enter email" 
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -188,12 +185,12 @@ const FeedbackForm = (props) => {
                                 </div>
 
                                 <div className="mt-8">
-                                    <label class="text-black text-sm block">Category</label>
+                                    <label className="text-black text-xs xl:text-sm block">Category</label>
                                     <select
                                         name="HeadlineAct"
                                         id="HeadlineAct"
                                         required
-                                        className="focus:outline-none mt-1.5 px-4 py-3 w-full bg-gray-100 rounded-lg border border-gray-400 text-black sm:text-sm"
+                                        className="focus:outline-none mt-1.5 px-4 py-3 w-full bg-gray-100 rounded-lg border border-gray-400 text-black text-xs xl:text-sm"
                                         value={category}
                                         onChange={(e) => setCategory(e.target.value)}
                                     >
@@ -206,7 +203,7 @@ const FeedbackForm = (props) => {
                                 </div>
 
                                 <div className="mt-4">
-                                    <label for="rating" class="block mb-2 text-sm text-black">Rating: <span className = "font-bold">{rating}/10</span></label>
+                                    <label htmlFor="rating" className="block mb-2 text-xs xl:text-sm text-black">Rating: <span className="font-bold">{rating}/10</span></label>
                                     <input 
                                         id="rating" 
                                         type="range" 
@@ -214,18 +211,18 @@ const FeedbackForm = (props) => {
                                         max="10" 
                                         value={rating} 
                                         onChange={(e) => setRating(e.target.value)} 
-                                        class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-purple-400">
+                                        className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-purple-400">
                                     </input>
                                 </div>
                                 <div className="mt-4">
-                                    <label class="text-black text-sm mb-2 block">Message</label>
+                                    <label className="text-black text-xs xl:text-sm mb-2 block">Message</label>
                                     <textarea 
                                         name="message" 
                                         rows="4" 
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
                                         required
-                                        class="w-full bg-gray-100 text-black text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none" 
+                                        className="w-full bg-gray-100 text-black text-xs xl:text-sm border border-gray-400 px-4 py-3 rounded-md focus:outline-none" 
                                         placeholder="Enter your message (at least 50 characters)">
                                     </textarea>
                                 </div>
@@ -233,9 +230,6 @@ const FeedbackForm = (props) => {
                                     {submitButton}
                                 </div>
                             </div>
-                        </div>
-                        <div className="rounded-lg text-black flex flex-col items-center justify-center">
-                            <img src={FeedbackImage} alt="Feedback" className = "h-2/3"/>
                         </div>
                     </form>
                 </div>
