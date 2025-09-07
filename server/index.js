@@ -209,11 +209,35 @@ app.delete("/users/:userID/feedback", async (req, res) => {
     }
 });
 
+// escapes and sanitises string
+function sanitise(string) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;',
+        "/": '&#x2F;',
+    };
+    const reg = /[&<>"'/]/ig;
+    return string.replace(reg, (match)=>(map[match]));
+}
+
+
 // API: Add feedback object to feedbackData of a user
 app.post("/users/:userID/feedback", async (req, res) => {
     try {
         const userID = req.params.userID;
         const feedbackObject = req.body; // Expecting feedbackObject from request body
+
+        // new feedback json that has been santised
+        const sanitisedFeedbackObject = {
+            name: sanitise(feedbackObject.name),
+            email: sanitise(feedbackObject.email),
+            category: sanitise(feedbackObject.category),
+            rating: Math.min(Math.max(parseInt(feedbackObject.rating, 10), 0), 10), // ensure between 0 and 10
+            message: sanitise(feedbackObject.message),
+        }
 
         const database = client.db(dbName);
         const users = database.collection(collectionName);
@@ -221,7 +245,7 @@ app.post("/users/:userID/feedback", async (req, res) => {
         // Update user's feedbackData array with the new feedbackObject
         const result = await users.updateOne(
             { userID },
-            { $push: { feedbackData: feedbackObject } }
+            { $push: { feedbackData: sanitisedFeedbackObject } }
         );
 
         if (result.matchedCount > 0) {
