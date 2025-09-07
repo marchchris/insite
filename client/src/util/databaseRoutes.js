@@ -11,7 +11,6 @@ export async function getUserById(userID) {
 
 // Function to retrieve user by API key
 export async function getUserSettingsByApiKey(apiKey) {
-  console.log("fetching key ", apiKey);
   const response = await fetch(`${API_BASE_URL}/userSettings/${apiKey}`);
   if (!response.ok) {
     throw new Error("User not found");
