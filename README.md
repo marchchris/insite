@@ -1,34 +1,9 @@
-# 💬 InSite - Website Feedback System
+# InSite
 
-InSite is a modern, user-friendly feedback collection system designed to help website owners gather, manage, and analyze user feedback efficiently. With an easy-to-integrate widget and comprehensive dashboard, InSite makes it simple to understand your users' needs and improve your website experience.
+InSite is a modern, user-friendly feedback collection system designed to help website owners gather, manage, and analyze user feedback efficiently.
 
-<div align="center">
-  <img src="dashboardImage.png" width="600" alt="Dashboard Preview">
-</div>
+![showcase](READMEIMGS/InsiteShowcase.png)
 
-## Features
-
-- 🎨 **Customizable Feedback Form**
-  - Light/Dark mode options
-  - Customizable form title and description
-  - Multi-category feedback collection
-  - Rating system with visual indicators
-
-- 📊 **Interactive Dashboard**
-  - Real-time feedback statistics
-  - Visual analytics with charts
-  - Feedback filtering and sorting
-  - Comprehensive feedback management system
-
-- 🔒 **Secure Authentication**
-  - Email/Password authentication
-  - Account management features
-  - Secure API key system
-
-- 🔌 **Easy Integration**
-  - Simple HTML snippet integration
-  - Responsive design
-  - Cross-browser compatibility
 
 ## Usage
 
@@ -57,6 +32,16 @@ To add the feedback widget to your website, copy the following code and replace 
     Feedback
 </a>
 ```
+
+## Features
+
+- **Customizable Feedback Form**: Offers light/dark mode options, customizable titles and descriptions, multi-category feedback collection, and a rating system with visual indicators.
+
+- **Interactive Dashboard**: Provides real-time feedback statistics, visual analytics with charts, and tools for filtering, sorting, and managing feedback comprehensively.
+
+- **Secure Authentication**: Features email/password authentication, account management, and a secure API key system to protect user data.
+
+- **Easy Integration**: Includes a simple HTML snippet for integration, responsive design, and cross-browser compatibility to ensure seamless usage.
 
 ## View Live
 This app is live at: https://insite-eta.vercel.app/
